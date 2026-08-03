@@ -175,6 +175,7 @@
     padding:2px 6px;
     border-radius:6px;
     letter-spacing:0.5px;
+    z-index:1;
   }
 
   .tama-info{
@@ -650,7 +651,24 @@
     { stages: [ {id: 393, name: 'Piplup' }, { id: 394, name: 'Prinplup' }, { id: 395, name: 'Empoleon' } ] },
     { stages: [ {id: 495, name: 'Snivy' }, { id: 496, name: 'Servine' }, { id: 497, name: 'Serperior' } ] },
     { stages: [ {id: 498, name: 'Tepig' }, { id: 499, name: 'Pignite' }, { id: 500, name: 'Emboar' } ] },
-    { stages: [ {id: 501, name: 'Oshawott' }, { id: 502, name: 'Dewott' }, { id: 503, name: 'Samurott' } ] }
+    { stages: [ {id: 501, name: 'Oshawott' }, { id: 502, name: 'Dewott' }, { id: 503, name: 'Samurott' } ] },
+
+    // legendary pokemon
+    { stages: [ {id: 144, name: 'Articuno' }, { id: 145, name: 'Zapdos' }, { id: 146, name: 'Moltres' } ] },
+    { stages: [ {id: 150, name: 'Mewtwo' }, { id: 151, name: 'Mew' }, { id: 493, name: 'Arceus' } ] },
+    { stages: [ {id: 249, name: 'Lugia' }, { id: 250, name: 'Ho-Oh' }, { id: 251, name: 'Celebi' } ] },
+    { stages: [ {id: 377, name: 'Regirock' }, { id: 378, name: 'Regice' }, { id: 379, name: 'Registeel' } ] },
+    { stages: [ {id: 380, name: 'Latias' }, { id: 381, name: 'Latios' }, { id: 382, name: 'Kyogre' } ] },
+    { stages: [ {id: 383, name: 'Groudon' }, { id: 384, name: 'Rayquaza' }, { id: 385, name: 'Jirachi' } ] },
+    { stages:[ {id: 643, name: 'Reshiram' }, { id: 644, name: 'Zekrom' }, { id: 646, name: 'Kyurem' } ] },
+    { stages:[ {id: 638, name: 'Cobalion' }, { id: 639, name: 'Terrakion' }, { id: 640, name: 'Virizion' } ] },
+    { stages:[ {id: 641, name: 'Tornadus' }, { id: 642, name: 'Thundurus' }, { id: 645, name: 'Landorus' } ] },
+
+    // other pokemon
+    { stages: [ {id: 595, name: 'Joltik' }, { id: 596, name: 'Galvantula' }, { id: 597, name: 'Ferroseed' } ] },
+    { stages: [ {id: 599, name: 'Klink' }, { id: 600, name: 'Klang' }, { id: 601, name: 'Klinklang' } ] },
+    { stages: [ {id: 602, name: 'Tynamo' },{ id: 603, name: 'Eelektrik' }, {id: 604, name: 'Eelektross' } ] },
+
   ];
 
   var EVOLVE_AT_LEVEL = [1, 5, 9]; // level thresholds for stage 0 / 1 / 2 (final)
@@ -1115,6 +1133,16 @@
       '<button class="primary-btn" id="rerollBtn">Reroll companion</button>' +
     '</div>';
 
+    // Select companion dropdown
+    html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
+      '<label>Select companion</label>' +
+      '<select id="selectCompanion">' +
+        STARTER_LINES.map(function(line, idx){
+          return '<option value="'+idx+'">'+line.stages[0].name+'</option>';
+        }).join('') +
+      '</select>' +
+    '</div>';
+
     // Clear log button
     html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
       '<button class="primary-btn" id="clearLogBtn">Clear all logs</button>' +
@@ -1139,6 +1167,21 @@
         saveState();
         renderAll();
         showToast('Rerolled companion!');
+      });
+    }
+
+    // select companion dropdown handler
+    var selectComp = document.getElementById('selectCompanion');
+    if(selectComp){
+      selectComp.value = state.pokemon ? state.pokemon.lineIndex : 0;
+      selectComp.addEventListener('change', function(){
+        var idx = parseInt(selectComp.value, 10);
+        var wk = weekIndex(Date.now());
+        state.pokemon = { weekKey: wk, lineIndex: idx, xp: 0 };
+        pokemonJustRolled = true;
+        saveState();
+        renderAll();
+        showToast('Selected companion: ' + STARTER_LINES[idx].stages[0].name);
       });
     }
 
