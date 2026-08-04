@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PokeLog</title>
+<title>Ledger — Habit &amp; Work Tracker</title>
 
 <!-- Browser tab icon -->
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeBAMAAADJHrORAAAAIVBMVEUhISEhISFKUlJ7e4ScSjqlpcXeWjrezvf/lDr/1jr///+Mng2PAAAAAXRSTlMAQObYZgAAAH5JREFUGNNjYKALEBQUROF2dHQgCTACuR1tAnC+xEyQQCJcunPVDCA/TQAHX6IDrD4tEc4Hm4eTLwLmp6U5QvlCHk1KQG6KIoyvpLpULc1JCcZnNNJapaSkpAy3v8p0KZBbCnew+GLj8vLyQIR/woHcUAEk/4aGhgriCQ/aAQCfHi5ulbG+aAAAAABJRU5ErkJggg==">
@@ -34,6 +34,8 @@
     --accent2:#4fa8a0;
     --danger:#d9695a;
     --line:#2f3742;
+    --xp:#9bb6e9;
+    --xp2:#1c53b9;
     --font-display:'Space Grotesk', 'Arial Black', sans-serif;
     --font-mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     --font-body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -69,6 +71,9 @@
     top:0;
     background:linear-gradient(var(--bg) 80%, transparent);
     z-index:5;
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
   }
   .stamp-mark{
     width:34px; height:34px;
@@ -90,7 +95,7 @@
     margin:0;
     flex:1;
   }
-  .topbar h1 span{ color:var(--accent); }
+  .topbar h1 span{ color:var(--accent);  }
   .icon-btn{
     background:var(--surface-2);
     border:1px solid var(--line);
@@ -168,7 +173,7 @@
     position:absolute;
     top:5px; left:5px;
     background:rgba(0,0,0,0.55);
-    color:var(--accent);
+    color:var(--xp);
     font-family:var(--font-mono);
     font-size:10px;
     font-weight:700;
@@ -209,10 +214,10 @@
   .tama-pips span{
     width:7px; height:7px;
     border-radius:50%;
-    background:var(--cream-dim);
-    border:1px solid #a8977a;
+    background:var(--xp2);
+    border:1px solid var(--xp);
   }
-  .tama-pips span.filled{ background:var(--accent); border-color:var(--accent); }
+  .tama-pips span.filled{ background:var(--xp); border-color:var(--xp2); }
 
   .xp-track{
     height:9px;
@@ -222,7 +227,7 @@
   }
   .xp-fill{
     height:100%;
-    background:linear-gradient(90deg, var(--accent2), var(--accent));
+    background:linear-gradient(90deg, var(--xp), var(--xp2));
     border-radius:5px;
     transition:width 0.5s ease;
     width:0%;
@@ -230,7 +235,7 @@
   .xp-label{
     font-family:var(--font-mono);
     font-size:10.5px;
-    color:#6b6250;
+    color: --var(--ink);
   }
 
   /* ---------- Toast ---------- */
@@ -593,7 +598,7 @@
   </div>
 
   <div class="tama-card" id="tamaCard">
-    <div class="tama-screws"><span></span><span></span><span></span><span></span></div>
+    <!-- <div class="tama-screws"><span></span><span></span><span></span><span></span></div> -->
     <div class="tama-screen">
       <div class="tama-lvl-badge" id="tamaLvlBadge">Lv 1</div>
       <img class="tama-sprite" id="tamaSprite" src="" alt="Companion sprite">
@@ -1100,6 +1105,47 @@
     document.querySelectorAll('.modal-overlay').forEach(function(m){ m.classList.add('hidden'); });
   }
 
+  // Companion message based on current weather, if available (uses Open-Meteo free API, no key required).
+  function fetchWeatherMessage(){
+    // default to sydney, AU if geolocation fails
+    var geo = navigator.geolocation;
+    if (geo) {
+      geo.getCurrentPosition(async function(position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        await fetchWeather(lat, lon);
+      }, async function(error) {
+        console.warn('Geolocation failed, using default location (Sydney, AU).', error);
+        await fetchWeather(-33.8688, 151.2093); // Sydney, AU
+      });
+    } else {
+      console.warn('Geolocation not supported, using default location (Sydney, AU).');
+      fetchWeather(-33.8688, 151.2093); // Sydney, AU
+    }
+
+    async function fetchWeather(lat, lon) {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current_weather=true';
+      console.log('Fetching weather from:', url);
+      try {
+        const resp = await fetch(url);
+        const data = await resp.json();
+        console.log('Weather data:', data, resp);
+        if(!data || !data.current_weather) return;
+        var temp = data.current_weather.temperature;
+        var msg;
+        if(temp <= 0) msg = "Brrr! It's freezing outside! ❄️";
+        else if(temp <= 10) msg = "It's chilly today. 🧥";
+        else if(temp <= 20) msg = "Cool weather today. 🌤️";
+        else if(temp <= 30) msg = "Nice and warm! ☀️";
+        else msg = "It's hot out there! 🥵";
+        document.getElementById('tamaCaption').textContent = msg;
+      } catch (err) {
+        console.warn('Weather fetch failed:', err);
+      };
+    }
+    fetchWeather(-33.8688, 151.2093); // Sydney, AU
+  }
+
   function renderManageContent(){
     var html = '';
     if(!state.categories.length){
@@ -1295,6 +1341,7 @@
   });
 
   renderAll();
+  fetchWeatherMessage();
 })();
 </script>
 </body>
