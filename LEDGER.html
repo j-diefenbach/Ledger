@@ -648,12 +648,106 @@
   // var SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/';
   function spriteUrl(id){ return SPRITE_BASE + id + '.gif'; }
 
+  // Starter Pokémon lines (Gen I, II, III, IV, V)
+
+  var type_x_weather_condition_messages = {
+    grass: {
+      sunny: ["The sun is shining, and your Grass-type Pokémon is thriving!",
+              "Your Grass-type Pokémon is basking in the sunlight and feels energized!"
+      ],
+      rainy: ["Rainy weather boosts your Grass-type Pokémon's growth!",
+              "Your Grass-type Pokémon is enjoying the rain and feels refreshed!",
+              "POKEMON is dancing and splashing around!",
+              "POKEMON is happy about the rain!",
+      ],
+      snowy: ["Snowy conditions are a bit harsh for your Grass-type Pokémon."],
+      stormy: ["Stormy weather makes it hard for your Grass-type Pokémon to focus."],
+      cold: ["Cold weather slows down your Grass-type Pokémon's metabolism."],
+      mild: ["Mild weather is ideal for your Grass-type Pokémon."],
+      hot: ["Hot weather can be draining for your Grass-type Pokémon."],
+      misc: [
+        "Your Grass-type Pokémon is playing in the grass and seems happy!",
+        "Your Grass-type Pokémon is enjoying the fresh air and feels content."
+      ]
+    },
+    fire: {
+      sunny: ["The sun is blazing, and your Fire-type Pokémon is energized!",
+              "Your Fire-type Pokémon is loving the heat and feels unstoppable!"
+      ],
+      rainy: ["Rainy weather dampens your Fire-type Pokémon's spirit.",
+              "Your Fire-type Pokémon is hiding out of the rain, trying to stay warm.",
+              "POKEMON seems very surprised that it's raining!"
+      ],
+      snowy: ["Snowy conditions are challenging for your Fire-type Pokémon."],
+      stormy: ["Stormy weather makes it difficult for your Fire-type Pokémon to perform."],
+      cold: ["Cold weather can make your Fire-type Pokémon sluggish."],
+      mild: ["Mild weather is comfortable for your Fire-type Pokémon."],
+      hot: ["Hot weather is perfect for your Fire-type Pokémon to shine.",
+            "Your Fire-type Pokémon is loving the heat!"],
+      misc: [
+        "Your Fire-type Pokémon is playing with flames and seems happy!",
+        "Your Fire-type Pokémon feels content."
+      ]
+
+    },
+    water: {
+      sunny: ["The sun is shining, but your Water-type Pokémon is still going strong!"],
+      rainy: ["Rainy weather is perfect for your Water-type Pokémon to flourish!",
+              "POKEMON is looking up with its mouth open, enjoying the rain!",
+              "POKEMON is happy about the rain!",
+              "POKEMON is splashing in puddles and having a great time!"
+      ],
+      snowy: ["Snowy conditions are a bit chilly for your Water-type Pokémon."],
+      stormy: ["Stormy weather makes it hard for your Water-type Pokémon to stay focused."],
+      cold: ["Cold weather can slow down your Water-type Pokémon's movements."],
+      mild: ["Mild weather is great for your Water-type Pokémon."],
+      hot: ["Hot weather can be a bit draining for your Water-type Pokémon.", 
+            "Your Water-type Pokémon is enjoying the warm weather, but be careful not to overheat!",
+          "Your Water-type Pokémon wants to go to the beach and splash around in the water!"],
+      misc: [
+        "Your Water-type Pokémon is playing in the water and seems happy!",
+        "Your Water-type Pokémon feels content"
+      ]
+    }
+  }
   var STARTER_LINES = [
-    { type: 'grass', stages:[ {id:1,   name:'Bulbasaur',},  {id:2,   name:'Ivysaur'},    {id:3,   name:'Venusaur'}    ] },
-    { type: 'fire', stages:[ {id:4,   name:'Charmander'}, {id:5,   name:'Charmeleon'}, {id:6,   name:'Charizard'}   ] },
-    { type: 'water', stages:[ {id:7,   name:'Squirtle'},   {id:8,   name:'Wartortle'},  {id:9,   name:'Blastoise'}   ] },
-    { type: 'grass', stages:[ {id:152, name:'Chikorita'},  {id:153, name:'Bayleef'},    {id:154, name:'Meganium'}    ] },
-    { type: 'fire', stages:[ {id:155, name:'Cyndaquil'},  {id:156, name:'Quilava'},    {id:157, name:'Typhlosion'}  ] },
+    { type: 'grass', stages:[ {id:1,   name:'Bulbasaur',},  {id:2,   name:'Ivysaur'},    {id:3,   name:'Venusaur'}    ],
+      messages: [
+        {type: 'happy', msg: 'POKEMON is wagging its bulb'},
+        {type: 'happy', msg: 'POKEMON is stomping its feet playfully'},
+        {type: 'sad', msg: 'POKEMON is drooping its bulb'},
+      ] },
+    { type: 'fire', stages:[ {id:4,   name:'Charmander'}, {id:5,   name:'Charmeleon'}, {id:6,   name:'Charizard'}   ],
+      messages: [
+        {type: 'happy', msg: 'POKEMON is wagging its tail'},
+        {type: 'happy', msg: 'POKEMON is stomping its feet playfully'},
+        {type: 'happy', msg: 'Smoke is rising from POKEMON\'s tail'},
+        {type: 'sad', msg: 'POKEMON\'s tail is drooping'},
+      ]
+    },
+    { type: 'water', stages:[ {id:7,   name:'Squirtle'},   {id:8,   name:'Wartortle'},  {id:9,   name:'Blastoise'}   ],
+      messages: [
+        {type: 'happy', msg: 'POKEMON is wagging its tail'},
+        {type: 'happy', msg: 'POKEMON is stomping its feet playfully'},
+        {type: 'happy', msg: 'POKEMON is shooting water into the air'},
+        {type: 'sad', msg: 'POKEMON has retreated into its shell'},
+      ]
+    },
+    { type: 'grass', stages:[ {id:152, name:'Chikorita'},  {id:153, name:'Bayleef'},    {id:154, name:'Meganium'}    ],
+      messages: [
+        {type: 'happy', msg: 'POKEMON is waving its leaf around'},
+        {type: 'happy', msg: 'POKEMON is stomping its feet playfully'},
+        {type: 'sad', msg: 'POKEMON\'s leaf is drooping'},
+      ]
+    },
+    { type: 'fire', stages:[ {id:155, name:'Cyndaquil'},  {id:156, name:'Quilava'},    {id:157, name:'Typhlosion'}  ],
+      messages: [
+        {type: 'happy', msg: 'POKEMON is stomping its feet playfully'},
+        {type: 'happy', msg: 'POKEMON blew a small flame into the air'},
+        {type: 'sad', msg: 'POKEMON\'s flames are flickering weakly'},
+
+      ]
+    },
     { type: 'water', stages:[ {id:158, name:'Totodile'},   {id:159, name:'Croconaw'},   {id:160, name:'Feraligatr'}  ] },
     { type: 'grass', stages: [ {id: 252, name: 'Treecko' }, { id: 253, name: 'Grovyle' }, { id: 254, name: 'Sceptile' } ] },
     { type: 'fire', stages: [ {id: 255, name: 'Torchic' }, { id: 256, name: 'Combusken' }, { id: 257, name: 'Blaziken' } ] },
@@ -898,7 +992,7 @@
     var pct = span > 0 ? Math.min(100, Math.round((into / span) * 100)) : 100;
     document.getElementById('tamaXpFill').style.width = pct + '%';
     document.getElementById('tamaXpLabel').textContent = into + ' / ' + span + ' XP to next level';
-
+    document.getElementById('tamaCaption').textContent = localStorage.getItem('tamaCaption') || 'This week\'s companion';
     if(pokemonJustRolled){
       pokemonJustRolled = false;
       showToast('A new companion appeared: ' + info.stage.name + '!');
@@ -1107,6 +1201,14 @@
 
   // Companion message based on current weather, if available (uses Open-Meteo free API, no key required).
   function fetchWeatherMessage(){
+
+    // only update every 10s max
+    var lastFetch = localStorage.getItem('lastWeatherFetch');
+    if(lastFetch && (Date.now() - new Date(lastFetch).getTime()) < 10000){
+      console.log('Weather fetch skipped (last fetch was less than 10s ago).');
+      return;
+    }
+    localStorage.setItem('lastWeatherFetch', new Date().toISOString());
     // default to sydney, AU if geolocation fails
     var geo = navigator.geolocation;
     if (geo) {
@@ -1131,7 +1233,6 @@
         const data = await resp.json();
         console.log('Weather data:', data, resp);
         if(!data || !data.current_weather) return;
-        var temp = data.current_weather.temperature;
         var msg;
 
         // break down weather into sunniness, temperature, and precipitation
@@ -1139,29 +1240,60 @@
         // then can generate appropriate messages
         // grass types prefer sun, fire types prefer heat, water types prefer rain, etc.
 
-        sun = data.current_weather.weathercode; // weather code for sun/rain/snow/etc.
-        temp = data.current_weather.temperature; // temperature in Celsius
-        rain = data.current_weather.precipitation; // precipitation in mm
-        console.log('Weather code:', sun, 'Temp:', temp, 'Rain:', rain);
-        document.getElementById('tamaCaption').textContent = sun + ', ' + temp + '°C, ' + rain + 'mm';
+        let weathercode = data.current_weather.weathercode; // weather code for sun/rain/snow/etc.
+        let temp = data.current_weather.temperature; // temperature in Celsius
+        console.log('Weather code:', weathercode, 'Temp:', temp);
 
-        if (sun === 0) msg = "It's sunny outside! 🌞";
-        else if (sun === 1) msg = "It's partly cloudy. ⛅";
-        else if (sun === 2) msg = "It's cloudy today. ☁️";
-        else if (sun === 3) msg = "It's raining! 🌧️";
-        else if (sun === 4) msg = "It's snowing! ❄️";
-        else msg = "Weather is unpredictable today! 🌦️";
-        // if(temp <= 0) msg = "Brrr! It's freezing outside! ❄️";
-        // else if(temp <= 10) msg = "It's chilly today. 🧥";
-        // else if(temp <= 20) msg = "Cool weather today. 🌤️";
-        // else if(temp <= 30) msg = "Nice and warm! ☀️";
-        // else msg = "It's hot out there! 🥵";
-        document.getElementById('tamaCaption').textContent = msg;
+        // get weather condition
+        let weatherCondition = '';
+        if (weathercode === 0) weatherCondition = 'sunny';
+        else if (weathercode === 1 || weathercode === 2) weatherCondition = 'partly cloudy';
+        else if (weathercode === 3) weatherCondition = 'cloudy';
+        else if (weathercode === 61 || weathercode === 63 || weathercode === 65) weatherCondition = 'rainy';
+        else if (weathercode === 71 || weathercode === 73 || weathercode === 75) weatherCondition = 'snowy';
+        else weatherCondition = 'unpredictable';
+
+        // get pokemon type
+        let pokemonType = getPokemonInfo().line.type; // grass, fire, water
+
+        // generate message based on weather and pokemon type
+        // get possible messages for the pokemon type
+        let possibleMessages = [];
+        getPokemonInfo().line.messages.forEach(function(msgObj) {
+          if (msgObj.type === 'happy' && (weatherCondition === 'sunny' || weatherCondition === 'partly cloudy')) {
+            possibleMessages.push(msgObj.msg);
+          } else if (msgObj.type === 'sad' && (weatherCondition === 'rainy' || weatherCondition === 'snowy')) {
+            possibleMessages.push(msgObj.msg);
+          } else if (msgObj.type === 'happy' && weatherCondition === 'unpredictable') {
+            possibleMessages.push(msgObj.msg);
+          }
+        });
+        possibleMessages = possibleMessages.concat(type_x_weather_condition_messages[pokemonType][weatherCondition]);
+
+        // Replace "your ... pokemon" or "water type pokemon" or "POKEMON" with the actual pokemon name
+        possibleMessages = possibleMessages.map(function(msg) {
+          // filter out all instaces of "your" "fire type" with empty
+          msg = msg.toLowerCase();
+          msg = msg.replace(/your |.*?type|/gi, '');
+          // then replace pokemon etc
+          return msg.replace(/your .* pokemon|pokemon|Pokémon|POKEMON/gi, getPokemonInfo().stage.name);
+        });
+
+        console.log('Possible messages:', possibleMessages);
+        if (possibleMessages.length > 0) {
+          var randomIndex = Math.floor(Math.random() * possibleMessages.length);
+          var randomMessage = possibleMessages[randomIndex];
+          localStorage.setItem('tamaCaption', randomMessage);
+          document.getElementById('tamaCaption').textContent = randomMessage
+        } else {
+          document.getElementById('tamaCaption').textContent = 'POKEMON is feeling neutral.';
+        }
+
       } catch (err) {
         console.warn('Weather fetch failed:', err);
       };
     }
-    fetchWeather(-33.8688, 151.2093); // Sydney, AU
+    // fetchWeather(-33.8688, 151.2093); // Sydney, AU
   }
 
   function renderManageContent(){
