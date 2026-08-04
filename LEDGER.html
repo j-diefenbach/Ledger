@@ -649,21 +649,21 @@
   function spriteUrl(id){ return SPRITE_BASE + id + '.gif'; }
 
   var STARTER_LINES = [
-    { stages:[ {id:1,   name:'Bulbasaur'},  {id:2,   name:'Ivysaur'},    {id:3,   name:'Venusaur'}    ] },
-    { stages:[ {id:4,   name:'Charmander'}, {id:5,   name:'Charmeleon'}, {id:6,   name:'Charizard'}   ] },
-    { stages:[ {id:7,   name:'Squirtle'},   {id:8,   name:'Wartortle'},  {id:9,   name:'Blastoise'}   ] },
-    { stages:[ {id:152, name:'Chikorita'},  {id:153, name:'Bayleef'},    {id:154, name:'Meganium'}    ] },
-    { stages:[ {id:155, name:'Cyndaquil'},  {id:156, name:'Quilava'},    {id:157, name:'Typhlosion'}  ] },
-    { stages:[ {id:158, name:'Totodile'},   {id:159, name:'Croconaw'},   {id:160, name:'Feraligatr'}  ] },
-    { stages: [ {id: 252, name: 'Treecko' }, { id: 253, name: 'Grovyle' }, { id: 254, name: 'Sceptile' } ] },
-    { stages: [ {id: 255, name: 'Torchic' }, { id: 256, name: 'Combusken' }, { id: 257, name: 'Blaziken' } ] },
-    { stages: [ {id: 258, name: 'Mudkip' }, { id: 259, name: 'Marshtomp' }, { id: 260, name: 'Swampert' } ] },
-    { stages: [ {id: 387, name: 'Turtwig' }, { id: 388, name: 'Grotle' }, { id: 389, name: 'Torterra' } ] },
-    { stages: [ {id: 390, name: 'Chimchar' }, { id: 391, name: 'Monferno' }, { id: 392, name: 'Infernape' } ] },
-    { stages: [ {id: 393, name: 'Piplup' }, { id: 394, name: 'Prinplup' }, { id: 395, name: 'Empoleon' } ] },
-    { stages: [ {id: 495, name: 'Snivy' }, { id: 496, name: 'Servine' }, { id: 497, name: 'Serperior' } ] },
-    { stages: [ {id: 498, name: 'Tepig' }, { id: 499, name: 'Pignite' }, { id: 500, name: 'Emboar' } ] },
-    { stages: [ {id: 501, name: 'Oshawott' }, { id: 502, name: 'Dewott' }, { id: 503, name: 'Samurott' } ] },
+    { type: 'grass', stages:[ {id:1,   name:'Bulbasaur',},  {id:2,   name:'Ivysaur'},    {id:3,   name:'Venusaur'}    ] },
+    { type: 'fire', stages:[ {id:4,   name:'Charmander'}, {id:5,   name:'Charmeleon'}, {id:6,   name:'Charizard'}   ] },
+    { type: 'water', stages:[ {id:7,   name:'Squirtle'},   {id:8,   name:'Wartortle'},  {id:9,   name:'Blastoise'}   ] },
+    { type: 'grass', stages:[ {id:152, name:'Chikorita'},  {id:153, name:'Bayleef'},    {id:154, name:'Meganium'}    ] },
+    { type: 'fire', stages:[ {id:155, name:'Cyndaquil'},  {id:156, name:'Quilava'},    {id:157, name:'Typhlosion'}  ] },
+    { type: 'water', stages:[ {id:158, name:'Totodile'},   {id:159, name:'Croconaw'},   {id:160, name:'Feraligatr'}  ] },
+    { type: 'grass', stages: [ {id: 252, name: 'Treecko' }, { id: 253, name: 'Grovyle' }, { id: 254, name: 'Sceptile' } ] },
+    { type: 'fire', stages: [ {id: 255, name: 'Torchic' }, { id: 256, name: 'Combusken' }, { id: 257, name: 'Blaziken' } ] },
+    { type: 'water', stages: [ {id: 258, name: 'Mudkip' }, { id: 259, name: 'Marshtomp' }, { id: 260, name: 'Swampert' } ] },
+    { type: 'grass', stages: [ {id: 387, name: 'Turtwig' }, { id: 388, name: 'Grotle' }, { id: 389, name: 'Torterra' } ] },
+    { type: 'fire', stages: [ {id: 390, name: 'Chimchar' }, { id: 391, name: 'Monferno' }, { id: 392, name: 'Infernape' } ] },
+    { type: 'water', stages: [ {id: 393, name: 'Piplup' }, { id: 394, name: 'Prinplup' }, { id: 395, name: 'Empoleon' } ] },
+    { type: 'grass', stages: [ {id: 495, name: 'Snivy' }, { id: 496, name: 'Servine' }, { id: 497, name: 'Serperior' } ] },
+    { type: 'fire', stages: [ {id: 498, name: 'Tepig' }, { id: 499, name: 'Pignite' }, { id: 500, name: 'Emboar' } ] },
+    { type: 'water', stages: [ {id: 501, name: 'Oshawott' }, { id: 502, name: 'Dewott' }, { id: 503, name: 'Samurott' } ] }
 
     // // legendary pokemon
     // { stages: [ {id: 144, name: 'Articuno' }, { id: 145, name: 'Zapdos' }, { id: 146, name: 'Moltres' } ] },
@@ -1133,11 +1133,29 @@
         if(!data || !data.current_weather) return;
         var temp = data.current_weather.temperature;
         var msg;
-        if(temp <= 0) msg = "Brrr! It's freezing outside! ❄️";
-        else if(temp <= 10) msg = "It's chilly today. 🧥";
-        else if(temp <= 20) msg = "Cool weather today. 🌤️";
-        else if(temp <= 30) msg = "Nice and warm! ☀️";
-        else msg = "It's hot out there! 🥵";
+
+        // break down weather into sunniness, temperature, and precipitation
+
+        // then can generate appropriate messages
+        // grass types prefer sun, fire types prefer heat, water types prefer rain, etc.
+
+        sun = data.current_weather.weathercode; // weather code for sun/rain/snow/etc.
+        temp = data.current_weather.temperature; // temperature in Celsius
+        rain = data.current_weather.precipitation; // precipitation in mm
+        console.log('Weather code:', sun, 'Temp:', temp, 'Rain:', rain);
+        document.getElementById('tamaCaption').textContent = sun + ', ' + temp + '°C, ' + rain + 'mm';
+
+        if (sun === 0) msg = "It's sunny outside! 🌞";
+        else if (sun === 1) msg = "It's partly cloudy. ⛅";
+        else if (sun === 2) msg = "It's cloudy today. ☁️";
+        else if (sun === 3) msg = "It's raining! 🌧️";
+        else if (sun === 4) msg = "It's snowing! ❄️";
+        else msg = "Weather is unpredictable today! 🌦️";
+        // if(temp <= 0) msg = "Brrr! It's freezing outside! ❄️";
+        // else if(temp <= 10) msg = "It's chilly today. 🧥";
+        // else if(temp <= 20) msg = "Cool weather today. 🌤️";
+        // else if(temp <= 30) msg = "Nice and warm! ☀️";
+        // else msg = "It's hot out there! 🥵";
         document.getElementById('tamaCaption').textContent = msg;
       } catch (err) {
         console.warn('Weather fetch failed:', err);
