@@ -238,6 +238,32 @@
     color: --var(--ink);
   }
 
+  /* ---------- HP bar ---------- */
+  .hp-row{ display:flex; align-items:center; gap:6px; }
+  .hp-track{
+    flex:1;
+    height:8px;
+    background:rgba(36,31,22,0.15);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .hp-fill{
+    height:100%;
+    background:linear-gradient(90deg, #8bbf5a, #4f9c4a);
+    border-radius:4px;
+    transition:width 0.5s ease, background 0.3s ease;
+    width:100%;
+  }
+  .hp-fill.low{ background:linear-gradient(90deg, #e8c33d, #c98f2a); }
+  .hp-fill.critical{ background:linear-gradient(90deg, #e8746a, #b23c2c); }
+  .hp-label{
+    font-family:var(--font-mono);
+    font-size:9.5px;
+    color:var(--ink);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
   /* ---------- Toast ---------- */
   .toast{
     position:fixed;
@@ -440,6 +466,135 @@
     font-size:14px;
   }
 
+  /* ---------- Due items (frequency reminders) ---------- */
+  .due-section{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .due-item{
+    background:rgba(232,163,61,0.08);
+    border:1px solid var(--accent-dim);
+    border-radius:10px;
+    padding:10px;
+  }
+  .due-item-head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .due-badge{
+    font-family:var(--font-mono);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    color:var(--accent);
+    background:rgba(232,163,61,0.15);
+    padding:2px 7px;
+    border-radius:12px;
+    flex-shrink:0;
+  }
+  .due-name{ font-family:var(--font-display); font-weight:700; font-size:13.5px; }
+  .due-sub{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--text-dim);
+    margin:4px 0 8px;
+  }
+
+  /* ---------- XP/HP multiplier candy ---------- */
+  .candy-icon{
+    width:14px; height:14px;
+    vertical-align:-2px;
+    margin-right:3px;
+    image-rendering:pixelated;
+    image-rendering:crisp-edges;
+  }
+  .mult-note{
+    font-family:var(--font-mono);
+    font-size:10px;
+    color:var(--accent2);
+    margin:-4px 0 10px;
+  }
+  .chip-candy{
+    width:14px; height:14px;
+    vertical-align:middle;
+    image-rendering:pixelated;
+    image-rendering:crisp-edges;
+  }
+  .chip-mult-btn{
+    background:none; border:none; color:var(--accent); font-size:11px; font-family:var(--font-mono);
+    cursor:pointer; display:inline-flex; align-items:center; gap:3px; padding:0 2px;
+  }
+
+  /* ---------- Bad habit tag / frequency badge ---------- */
+  .bad-tag{
+    font-size:9.5px;
+    font-family:var(--font-mono);
+    color:var(--danger);
+    border:1px solid var(--danger);
+    padding:1px 6px;
+    border-radius:10px;
+    margin-left:5px;
+    vertical-align:middle;
+    white-space:nowrap;
+  }
+  .freq-badge{
+    font-size:10px;
+    font-family:var(--font-mono);
+    color:var(--accent2);
+    border:1px solid var(--accent2);
+    padding:1px 6px;
+    border-radius:10px;
+    margin-left:4px;
+  }
+  .chip-freq-btn{
+    background:none; border:none; color:var(--accent2); font-size:13px; cursor:pointer; line-height:1;
+    padding:0 2px;
+  }
+  .checkbox-row{
+    display:flex; align-items:center; gap:8px;
+    font-size:12.5px; color:var(--text-dim);
+    margin-top:12px;
+    text-transform:none;
+    letter-spacing:normal;
+  }
+  .new-cat-form input[type="checkbox"]{ width:auto; margin:0; }
+
+  /* ---------- Timer popup ---------- */
+  .timer-card{ text-align:center; }
+  .timer-screen{
+    position:relative;
+    height:120px;
+    border-radius:14px;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px),
+      radial-gradient(circle at 35% 25%, #1c2a28, var(--bg) 75%);
+    border:3px solid var(--ink);
+    box-shadow:inset 0 0 0 2px rgba(232,163,61,0.25);
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .timer-sprite{
+    position:absolute;
+    bottom:12px;
+    left:0px;
+    width:64px;
+    image-rendering:pixelated;
+    image-rendering:crisp-edges;
+    filter:drop-shadow(0 3px 2px rgba(0,0,0,0.4));
+    animation: tamaBob 1s ease-in-out infinite;
+  }
+  .timer-readout{
+    font-family:var(--font-mono);
+    font-size:36px;
+    font-weight:700;
+    color:var(--accent);
+    margin-bottom:6px;
+    letter-spacing:1px;
+  }
+  .timer-sub{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-dim);
+    margin-bottom:16px;
+  }
+  .timer-actions{ display:flex; gap:10px; }
+  .timer-actions button{ flex:1; margin-top:0; }
+  .timer-actions .mini-danger{ padding:12px; font-size:13px; border-radius:10px; }
+
   /* ---------- Recent log (ticket stubs) ---------- */
   .recent-log h2{
     font-family:var(--font-display);
@@ -608,6 +763,10 @@
         <span class="tama-name" id="tamaName">—</span>
         <div class="tama-pips" id="tamaPips"><span></span><span></span><span></span></div>
       </div>
+      <div class="hp-row">
+        <div class="hp-track"><div class="hp-fill" id="tamaHpFill"></div></div>
+        <span class="hp-label" id="tamaHpLabel">100 / 100 HP</span>
+      </div>
       <div class="tama-caption" id="tamaCaption">This week's companion</div>
       <div class="xp-track"><div class="xp-fill" id="tamaXpFill"></div></div>
       <div class="xp-label" id="tamaXpLabel">0 / 100 XP</div>
@@ -630,6 +789,22 @@
     <button class="modal-close" data-close="manageModal">&times;</button>
     <h2>Manage categories</h2>
     <div id="manageContent"></div>
+  </div>
+</div>
+
+<!-- Timer popup: stays open (persisted to localStorage) until Stopped or Cancelled -->
+<div class="modal-overlay hidden" id="timerModal">
+  <div class="modal-card timer-card">
+    <h2 id="timerTitle">Timer</h2>
+    <div class="timer-screen" id="timerScreen">
+      <img class="timer-sprite" id="timerSprite" src="" alt="Companion">
+    </div>
+    <div class="timer-readout" id="timerReadout">00:00</div>
+    <div class="timer-sub">counting up…</div>
+    <div class="timer-actions">
+      <button class="mini-danger" id="timerCancelBtn">Cancel</button>
+      <button class="primary-btn" id="timerStopBtn">Stop &amp; Log</button>
+    </div>
   </div>
 </div>
 
@@ -782,6 +957,60 @@
   var STREAK_BONUS_PER_DAY = 10;   // extra XP per active streak day (capped below)
   var STREAK_BONUS_CAP_DAYS = 10;
 
+  /* ---------------- Health (bad habits) ---------------- */
+  var BAD_HEALTH_PER_MINUTE = 2;   // 15 min of a bad habit = -30 HP
+  function maxHealthForLevel(level){ return 100 + (level - 1) * 10; }   // HP grows with level
+  function healthRestoreForLevel(level){ return 15 + level * 2; }       // daily regen also grows with level
+
+  /* ---------------- Per-activity XP/HP multiplier (Exp. Candy tiers) ---------------- */
+  // Some activities are worth more per minute than others — tag them with a bigger candy.
+  var MULTIPLIER_TIERS = [
+    { key: 'xs', mult: 1,   label: 'XS', sprite: 'https://static.wikia.nocookie.net/pokemon/images/8/83/Exp._Candy_XS_sprite.png/revision/latest?cb=20201206064558' },
+    { key: 'm',  mult: 1.5, label: 'M',  sprite: 'https://static.wikia.nocookie.net/pokemon/images/b/bd/Exp._Candy_M_sprite.png/revision/latest?cb=20201206064637' },
+    { key: 'xl', mult: 2,   label: 'XL', sprite: 'https://static.wikia.nocookie.net/pokemon/images/2/20/Exp._Candy_XL_sprite.png/revision/latest?cb=20201206064705' }
+  ];
+  var MULTIPLIER_ORDER = ['xs', 'm', 'xl'];
+  function getMultiplierTier(type){
+    var key = (type && type.multiplierTier) || 'xs';
+    for(var i=0; i<MULTIPLIER_TIERS.length; i++){ if(MULTIPLIER_TIERS[i].key === key) return MULTIPLIER_TIERS[i]; }
+    return MULTIPLIER_TIERS[0];
+  }
+  function cycleMultiplierTier(type){
+    var cur = (type.multiplierTier) || 'xs';
+    var idx = MULTIPLIER_ORDER.indexOf(cur);
+    type.multiplierTier = MULTIPLIER_ORDER[(idx + 1) % MULTIPLIER_ORDER.length];
+  }
+
+  // Single place that actually records a log entry and applies its XP/HP effect (scaled by
+  // the activity's candy multiplier). Used by the manual log button, the auto-surfaced due
+  // items, and the timer popup, so all three stay in sync.
+  function commitLog(catId, typeId, mins){
+    var cat = findCat(catId);
+    var type = cat && findType(cat, typeId);
+    if(!cat || !type || !mins || mins <= 0) return;
+
+    state.logs.push({ id: uid('log'), catId: catId, typeId: typeId, minutes: mins, ts: Date.now() });
+    saveState();
+
+    var tier = getMultiplierTier(type);
+    if(cat.isBad){
+      // Bad habits (e.g. doomscrolling) damage the companion's HP instead of granting XP.
+      damagePokemonHealth(Math.round(mins * BAD_HEALTH_PER_MINUTE * tier.mult), type.name);
+    } else {
+      // Award companion XP: 10 XP/minute (15 min = 150 XP), plus a bonus for an active streak,
+      // then scaled by the activity's own XP multiplier tier.
+      var postStreak = streakInfo(entriesFor(catId, typeId));
+      var xpGain = mins * XP_PER_MINUTE;
+      if(postStreak.type === 'active' && postStreak.streak >= 2){
+        xpGain += Math.min(postStreak.streak, STREAK_BONUS_CAP_DAYS) * STREAK_BONUS_PER_DAY;
+      }
+      addPokemonXp(Math.round(xpGain * tier.mult));
+    }
+
+    renderCategories();
+    renderLog();
+  }
+
   // Cumulative XP required to REACH level n+1, starting from level 1 at 0 XP.
   function xpThreshold(n){
     var total = 0;
@@ -853,6 +1082,25 @@
     }
   }
 
+  // Restores HP once per elapsed calendar day (catches up if the app wasn't opened for a few days).
+  // Also initializes health/lastHealthDate the first time a companion is seen (e.g. right after a reroll).
+  function ensureHealth(level){
+    var max = maxHealthForLevel(level);
+    if(state.pokemon.health == null || !state.pokemon.lastHealthDate){
+      state.pokemon.health = max;
+      state.pokemon.lastHealthDate = localDateStr(Date.now());
+      saveState();
+      return;
+    }
+    var today = localDateStr(Date.now());
+    if(state.pokemon.lastHealthDate !== today){
+      var daysElapsed = Math.max(1, Math.round((dateFromStr(today) - dateFromStr(state.pokemon.lastHealthDate)) / 86400000));
+      state.pokemon.health = Math.min(max, state.pokemon.health + healthRestoreForLevel(level) * daysElapsed);
+      state.pokemon.lastHealthDate = today;
+      saveState();
+    }
+  }
+
   function getPokemonInfo(){
     ensurePokemon();
     var line = STARTER_LINES[state.pokemon.lineIndex];
@@ -867,9 +1115,14 @@
     var curBase = level > 1 ? xpThreshold(level - 1) : 0;
     var nextBase = xpThreshold(level);
 
+    ensureHealth(level);
+    var maxHealth = maxHealthForLevel(level);
+    var health = Math.max(0, Math.min(maxHealth, state.pokemon.health));
+
     return {
       line: line, stageIdx: stageIdx, stage: line.stages[stageIdx],
-      level: level, xp: xp, curBase: curBase, nextBase: nextBase
+      level: level, xp: xp, curBase: curBase, nextBase: nextBase,
+      health: health, maxHealth: maxHealth
     };
   }
 
@@ -884,6 +1137,19 @@
       showToast('✨ ' + before.stage.name + ' evolved into ' + after.stage.name + '!');
     } else {
       showToast('+' + amount + ' XP for ' + after.stage.name);
+    }
+  }
+
+  // Bad-habit logging damages HP instead of granting XP.
+  function damagePokemonHealth(amount, label){
+    var info = getPokemonInfo(); // ensures health is initialized/regenerated first
+    state.pokemon.health = Math.max(0, info.health - amount);
+    saveState();
+    renderPokemon();
+    if(state.pokemon.health <= 0){
+      showToast('💢 -' + amount + ' HP from ' + label + '. ' + info.stage.name + ' has fainted!');
+    } else {
+      showToast('💢 -' + amount + ' HP from ' + label);
     }
   }
 
@@ -929,6 +1195,54 @@
       if(dates[i] === expected){ streak++; } else { break; }
     }
     return { type:'active', streak: streak };
+  }
+
+  /* ---------------- Frequency (recurring habits) ---------------- */
+  // Auto-detects a trailing shorthand like "2w" or "10 days" in a typed name, e.g.
+  // "Wash sheets 2w" -> { name: "Wash sheets", freq: {n:2, unit:'w'} }.
+  // Returns freq:null if no recognizable trailing frequency token is present.
+  function parseFrequencyFromName(rawName){
+    var trimmed = (rawName || '').trim();
+    var m = trimmed.match(/^(.*\S)\s*[-–,]?\s*(\d+)\s*(days|day|weeks|week|wks|wk|d|w)\s*$/i);
+    if(!m) return { name: trimmed, freq: null };
+    var cleanName = m[1].trim();
+    var n = parseInt(m[2], 10);
+    if(!cleanName || !n) return { name: trimmed, freq: null };
+    var unit = m[3].toLowerCase().charAt(0) === 'w' ? 'w' : 'd';
+    return { name: cleanName, freq: { n: n, unit: unit } };
+  }
+
+  // Parses a standalone frequency string like "2w" or "10 days" (used by the manual editor).
+  function parseFrequencyString(val){
+    var m = (val || '').trim().match(/^(\d+)\s*(days|day|weeks|week|wks|wk|d|w)$/i);
+    if(!m) return null;
+    var n = parseInt(m[1], 10);
+    if(!n) return null;
+    var unit = m[2].toLowerCase().charAt(0) === 'w' ? 'w' : 'd';
+    return { n: n, unit: unit };
+  }
+
+  function fmtFreq(freq){
+    if(!freq) return '';
+    if(freq.unit === 'w') return 'every ' + freq.n + (freq.n === 1 ? ' week' : ' weeks');
+    return 'every ' + freq.n + (freq.n === 1 ? ' day' : ' days');
+  }
+
+  function freqRequiredDays(freq){ return freq.unit === 'w' ? freq.n * 7 : freq.n; }
+
+  // Days since the most recent log for a set of entries. Infinity if never logged.
+  function daysSinceLastLog(entries){
+    if(!entries.length) return Infinity;
+    var mostRecentTs = entries.reduce(function(max, e){ return Math.max(max, e.ts); }, 0);
+    var today = localDateStr(Date.now());
+    var lastDay = localDateStr(mostRecentTs);
+    return Math.round((dateFromStr(today) - dateFromStr(lastDay)) / 86400000);
+  }
+
+  function isTypeDue(catId, type){
+    if(!type.freq) return false;
+    var days = daysSinceLastLog(entriesFor(catId, type.id));
+    return days >= freqRequiredDays(type.freq);
   }
 
   function weeklyMinutes(entries){
@@ -992,6 +1306,14 @@
     var pct = span > 0 ? Math.min(100, Math.round((into / span) * 100)) : 100;
     document.getElementById('tamaXpFill').style.width = pct + '%';
     document.getElementById('tamaXpLabel').textContent = into + ' / ' + span + ' XP to next level';
+
+    var hpPct = info.maxHealth > 0 ? Math.round((info.health / info.maxHealth) * 100) : 0;
+    var hpFill = document.getElementById('tamaHpFill');
+    hpFill.style.width = hpPct + '%';
+    hpFill.classList.toggle('low', hpPct <= 40 && hpPct > 15);
+    hpFill.classList.toggle('critical', hpPct <= 15);
+    document.getElementById('tamaHpLabel').textContent = info.health + ' / ' + info.maxHealth + ' HP';
+
     document.getElementById('tamaCaption').textContent = localStorage.getItem('tamaCaption') || 'This week\'s companion';
     if(pokemonJustRolled){
       pokemonJustRolled = false;
@@ -1019,7 +1341,7 @@
 
       var streakHtml;
       if(sInfo.type === 'active'){
-        streakHtml = '<span class="streak-stamp active">🔥 '+sInfo.streak+' day'+(sInfo.streak===1?'':'s')+'</span>';
+        streakHtml = '<span class="streak-stamp active">'+(cat.isBad?'⚠':'🔥')+' '+sInfo.streak+' day'+(sInfo.streak===1?'':'s')+'</span>';
       } else if(sInfo.type === 'stale'){
         streakHtml = '<span class="streak-stamp stale">'+sInfo.daysAgo+'d since last</span>';
       } else {
@@ -1027,19 +1349,67 @@
       }
 
       var typeOptions = '<option value="">Select activity…</option>' +
-        cat.types.map(function(t){ return '<option value="'+t.id+'">'+escapeHtml(t.name)+'</option>'; }).join('') +
+        cat.types.map(function(t){
+          var tier = getMultiplierTier(t);
+          return '<option value="'+t.id+'">'+escapeHtml(t.name)+(t.freq?' · '+fmtFreq(t.freq):'')+(tier.mult!==1?' · '+tier.mult+'x':'')+'</option>';
+        }).join('') +
         '<option value="__add__">+ Add new…</option>';
+
+      // Habits with a set frequency that are overdue surface here automatically,
+      // no need to open the dropdown to find them. Bad habits never get "due" reminders.
+      var dueTypes = cat.isBad ? [] : cat.types.filter(function(t){ return isTypeDue(cat.id, t); });
+      var dueHtml = '';
+      if(dueTypes.length){
+        dueHtml = '<div class="due-section">' + dueTypes.map(function(t){
+          var days = daysSinceLastLog(entriesFor(cat.id, t.id));
+          var sub = (days === Infinity ? 'Never logged' : days + 'd since last') + ' · ' + fmtFreq(t.freq);
+          var tier = getMultiplierTier(t);
+          return '<div class="due-item" data-cat="'+cat.id+'" data-type="'+t.id+'">' +
+            '<div class="due-item-head"><span class="due-badge">⏰ Due</span><span class="due-name"><img class="candy-icon" src="'+tier.sprite+'" alt="'+tier.label+' candy"> '+escapeHtml(t.name)+'</span></div>' +
+            '<div class="due-sub">'+sub+'</div>' +
+            '<div class="log-controls">' +
+              '<button class="step-btn" data-step="-5">−5</button>' +
+              '<input type="number" class="minutes-input" value="15" min="5" step="5">' +
+              '<button class="step-btn" data-step="5">+5</button>' +
+              '<button class="step-btn timer-start-btn" title="Start a timer instead">⏱</button>' +
+              '<button class="log-btn">Log</button>' +
+            '</div>' +
+          '</div>';
+        }).join('') + '</div>';
+      }
 
       card.innerHTML =
         '<div class="cat-header">' +
           '<span class="cat-icon">'+(cat.icon||'📌')+'</span>' +
-          '<span class="cat-name">'+escapeHtml(cat.name)+'</span>' +
+          '<span class="cat-name">'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</span>' +
           '<div class="cat-meta">' + streakHtml + '<span class="week-total">'+fmtDuration(weekMin)+' this wk</span></div>' +
         '</div>' +
+        dueHtml +
         '<select class="type-select" data-cat="'+cat.id+'">' + typeOptions + '</select>' +
         '<div class="type-detail" data-cat="'+cat.id+'" hidden></div>';
 
       container.appendChild(card);
+
+      // Wire up the auto-surfaced due items: same log-controls pattern as the dropdown detail panel.
+      card.querySelectorAll('.due-item').forEach(function(dueEl){
+        var tId = dueEl.getAttribute('data-type');
+        var mInput = dueEl.querySelector('.minutes-input');
+        dueEl.querySelectorAll('.step-btn[data-step]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var delta = parseInt(btn.getAttribute('data-step'), 10);
+            var val = parseInt(mInput.value, 10) || 0;
+            mInput.value = Math.max(5, val + delta);
+          });
+        });
+        dueEl.querySelector('.timer-start-btn').addEventListener('click', function(){
+          startTimerFor(cat.id, tId);
+        });
+        dueEl.querySelector('.log-btn').addEventListener('click', function(){
+          var mins = parseInt(mInput.value, 10);
+          if(!mins || mins <= 0) return;
+          commitLog(cat.id, tId, mins);
+        });
+      });
 
       var select = card.querySelector('.type-select');
       var openType = openTypeByCat[cat.id];
@@ -1077,14 +1447,18 @@
     var input = document.getElementById('newTypeInput_'+catId);
     input.focus();
     function confirmAdd(){
-      var name = input.value.trim();
-      if(!name) return;
+      var raw = input.value.trim();
+      if(!raw) return;
+      var parsed = parseFrequencyFromName(raw);
+      if(!parsed.name) return;
       var cat = findCat(catId);
-      var newType = { id: uid('t'), name: name };
+      var newType = { id: uid('t'), name: parsed.name };
+      if(parsed.freq) newType.freq = parsed.freq;
       cat.types.push(newType);
       saveState();
       openTypeByCat[catId] = newType.id;
       renderCategories();
+      if(parsed.freq){ showToast('Repeat set: ' + fmtFreq(parsed.freq)); }
     }
     document.getElementById('newTypeConfirm_'+catId).addEventListener('click', confirmAdd);
     input.addEventListener('keydown', function(e){ if(e.key==='Enter') confirmAdd(); });
@@ -1108,22 +1482,26 @@
       infoText = 'Never logged';
     }
 
+    var tier = getMultiplierTier(type);
+
     detail.hidden = false;
     detail.innerHTML =
       '<div class="type-overview">' +
-        '<span class="t-name">'+escapeHtml(type.name)+'</span>' +
+        '<span class="t-name"><img class="candy-icon" src="'+tier.sprite+'" alt="'+tier.label+' candy"> '+escapeHtml(type.name)+'</span>' +
         '<span class="t-info">'+infoText+'</span>' +
       '</div>' +
+      '<div class="mult-note">'+tier.label+' candy · '+tier.mult+'x '+(cat.isBad?'damage':'XP')+'</div>' +
       '<div class="log-controls">' +
         '<button class="step-btn" data-step="-5">−5</button>' +
         '<input type="number" class="minutes-input" value="15" min="5" step="5">' +
         '<button class="step-btn" data-step="5">+5</button>' +
+        '<button class="step-btn timer-start-btn" title="Start a timer instead">⏱</button>' +
         '<button class="log-btn">Log</button>' +
       '</div>' +
       '<div class="log-confirm">Logged!</div>';
 
     var input = detail.querySelector('.minutes-input');
-    detail.querySelectorAll('.step-btn').forEach(function(btn){
+    detail.querySelectorAll('.step-btn[data-step]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var delta = parseInt(btn.getAttribute('data-step'), 10);
         var val = parseInt(input.value, 10) || 0;
@@ -1131,25 +1509,16 @@
         input.value = val;
       });
     });
+    detail.querySelector('.timer-start-btn').addEventListener('click', function(){
+      startTimerFor(catId, typeId);
+    });
     detail.querySelector('.log-btn').addEventListener('click', function(){
       var mins = parseInt(input.value, 10);
       if(!mins || mins <= 0) return;
-      state.logs.push({ id: uid('log'), catId: catId, typeId: typeId, minutes: mins, ts: Date.now() });
-      saveState();
       var confirmEl = detail.querySelector('.log-confirm');
       confirmEl.style.display = 'block';
       setTimeout(function(){ if(confirmEl) confirmEl.style.display='none'; }, 1200);
-
-      // Award companion XP: 10 XP/minute (15 min = 150 XP), plus a bonus for an active streak.
-      var postStreak = streakInfo(entriesFor(catId, typeId));
-      var xpGain = mins * XP_PER_MINUTE;
-      if(postStreak.type === 'active' && postStreak.streak >= 2){
-        xpGain += Math.min(postStreak.streak, STREAK_BONUS_CAP_DAYS) * STREAK_BONUS_PER_DAY;
-      }
-      addPokemonXp(xpGain);
-
-      renderCategories();
-      renderLog();
+      commitLog(catId, typeId, mins);
     });
   }
 
@@ -1198,6 +1567,106 @@
   function closeModals(){
     document.querySelectorAll('.modal-overlay').forEach(function(m){ m.classList.add('hidden'); });
   }
+
+  /* ---------------- Timer popup ---------------- */
+  // Persisted to state.activeTimer so a page refresh (or reopening the app later) resumes
+  // the running timer instead of losing it.
+  var timerTickInterval = null;
+  var timerMoveInterval = null;
+
+  function fmtTimerReadout(ms){
+    var totalSec = Math.max(0, Math.floor(ms / 1000));
+    var hh = Math.floor(totalSec / 3600);
+    var mm = Math.floor((totalSec % 3600) / 60);
+    var ss = totalSec % 60;
+    var text = String(mm).padStart(2, '0') + ':' + String(ss).padStart(2, '0');
+    return hh > 0 ? String(hh).padStart(2, '0') + ':' + text : text;
+  }
+
+  function updateTimerReadout(){
+    if(!state.activeTimer) return;
+    document.getElementById('timerReadout').textContent = fmtTimerReadout(Date.now() - state.activeTimer.startTs);
+  }
+
+  // Makes the companion sprite wander back and forth inside the timer screen, Pokéwatch-style.
+  function startTimerSpriteMovement(){
+    var screen = document.getElementById('timerScreen');
+    var sprite = document.getElementById('timerSprite');
+    function moveOnce(){
+      var maxX = Math.max(0, screen.clientWidth - sprite.clientWidth);
+      var curX = parseFloat(sprite.style.left || '0');
+      var newX = Math.random() * maxX;
+      sprite.style.transition = 'left 1.8s linear';
+      sprite.style.transform = newX < curX ? 'scaleX(-1)' : 'scaleX(1)';
+      sprite.style.left = newX + 'px';
+    }
+    clearInterval(timerMoveInterval);
+    moveOnce();
+    timerMoveInterval = setInterval(moveOnce, 2200);
+  }
+  function stopTimerSpriteMovement(){
+    clearInterval(timerMoveInterval);
+    timerMoveInterval = null;
+  }
+
+  function startTimerFor(catId, typeId){
+    if(state.activeTimer && (state.activeTimer.catId !== catId || state.activeTimer.typeId !== typeId)){
+      alert('A timer is already running for another activity. Finish or cancel it first.');
+      openTimerPopup(state.activeTimer.catId, state.activeTimer.typeId, state.activeTimer.startTs);
+      return;
+    }
+    openTimerPopup(catId, typeId, (state.activeTimer && state.activeTimer.startTs) || Date.now());
+  }
+
+  function openTimerPopup(catId, typeId, startTs){
+    var cat = findCat(catId);
+    var type = cat && findType(cat, typeId);
+    if(!cat || !type){
+      state.activeTimer = null;
+      saveState();
+      return;
+    }
+    state.activeTimer = { catId: catId, typeId: typeId, startTs: startTs || Date.now() };
+    saveState();
+
+    document.getElementById('timerTitle').textContent = (cat.icon || '📌') + ' ' + type.name;
+    var info = getPokemonInfo();
+    var sprite = document.getElementById('timerSprite');
+    sprite.src = spriteUrl(info.stage.id);
+    sprite.alt = info.stage.name;
+    sprite.style.left = '0px';
+    sprite.style.transform = 'scaleX(1)';
+
+    updateTimerReadout();
+    document.getElementById('timerModal').classList.remove('hidden');
+    startTimerSpriteMovement();
+    clearInterval(timerTickInterval);
+    timerTickInterval = setInterval(updateTimerReadout, 1000);
+  }
+
+  function closeTimerPopup(){
+    clearInterval(timerTickInterval);
+    timerTickInterval = null;
+    stopTimerSpriteMovement();
+    document.getElementById('timerModal').classList.add('hidden');
+  }
+
+  document.getElementById('timerCancelBtn').addEventListener('click', function(){
+    state.activeTimer = null;
+    saveState();
+    closeTimerPopup();
+    showToast('Timer cancelled');
+  });
+
+  document.getElementById('timerStopBtn').addEventListener('click', function(){
+    var t = state.activeTimer;
+    closeTimerPopup();
+    if(!t){ return; }
+    var elapsedMin = Math.max(1, Math.round((Date.now() - t.startTs) / 60000));
+    state.activeTimer = null;
+    saveState();
+    commitLog(t.catId, t.typeId, elapsedMin);
+  });
 
   // Companion message based on current weather, if available (uses Open-Meteo free API, no key required).
   function fetchWeatherMessage(){
@@ -1305,17 +1774,23 @@
       html += '<div class="manage-cat-block">' +
         '<div class="manage-cat-head">' +
           '<span style="font-size:18px">'+(cat.icon||'📌')+'</span>' +
-          '<strong>'+escapeHtml(cat.name)+'</strong>' +
+          '<strong>'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</strong>' +
+          '<button class="mini-danger" data-toggle-bad="'+cat.id+'" style="border-color:var(--accent2);color:var(--accent2);">'+(cat.isBad?'Mark good':'Mark bad')+'</button>' +
           '<button class="mini-danger" data-del-cat="'+cat.id+'">Delete category</button>' +
         '</div>' +
         '<div class="type-chip-row">' +
           cat.types.map(function(t){
-            return '<span class="type-chip">'+escapeHtml(t.name)+'<button data-del-type="'+cat.id+'|'+t.id+'">&times;</button></span>';
+            var tier = getMultiplierTier(t);
+            return '<span class="type-chip">'+escapeHtml(t.name)+
+              (t.freq ? '<span class="freq-badge">'+fmtFreq(t.freq)+'</span>' : '') +
+              '<button class="chip-mult-btn" data-cycle-mult="'+cat.id+'|'+t.id+'" title="Cycle XP/HP multiplier"><img class="chip-candy" src="'+tier.sprite+'" alt="'+tier.label+' candy"> '+tier.mult+'x</button>' +
+              '<button class="chip-freq-btn" data-freq-edit="'+cat.id+'|'+t.id+'" title="Set repeat frequency">⏱</button>' +
+              '<button data-del-type="'+cat.id+'|'+t.id+'">&times;</button></span>';
           }).join('') +
           (cat.types.length===0 ? '<span style="font-size:12px;color:var(--text-faint)">No activities yet</span>' : '') +
         '</div>' +
         '<div class="inline-add">' +
-          '<input type="text" placeholder="New activity name" maxlength="30" id="quickType_'+cat.id+'">' +
+          '<input type="text" placeholder="New activity name (e.g. Wash sheets 2w)" maxlength="30" id="quickType_'+cat.id+'">' +
           '<button data-quick-add="'+cat.id+'">Add</button>' +
         '</div>' +
       '</div>';
@@ -1328,6 +1803,7 @@
       '<input type="text" id="newCatIcon" placeholder="📚" maxlength="4">' +
       '<label>Color</label>' +
       '<div class="swatches" id="colorSwatches"></div>' +
+      '<label class="checkbox-row"><input type="checkbox" id="newCatBad"> This is a bad habit (reduces companion HP instead of XP)</label>' +
       '<button class="primary-btn" id="addCatBtn">Add category</button>' +
     '</div>';
 
@@ -1414,6 +1890,57 @@
       swatchWrap.appendChild(sw);
     });
 
+    // toggle a category between "bad habit" and normal
+    manageContent.querySelectorAll('[data-toggle-bad]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var catId = btn.getAttribute('data-toggle-bad');
+        var cat = findCat(catId);
+        cat.isBad = !cat.isBad;
+        saveState();
+        renderManageContent();
+        renderCategories();
+      });
+    });
+
+    // manually set/clear a repeat frequency on an activity type
+    manageContent.querySelectorAll('[data-freq-edit]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-freq-edit').split('|');
+        var catId = parts[0], typeId = parts[1];
+        var cat = findCat(catId);
+        var type = findType(cat, typeId);
+        var current = type.freq ? (type.freq.n + type.freq.unit) : '';
+        var val = prompt('Repeat frequency for "'+type.name+'" (e.g. "2w" for every 2 weeks, "10d" for every 10 days). Leave blank to remove.', current);
+        if(val === null) return; // cancelled
+        val = val.trim();
+        if(!val){
+          delete type.freq;
+        } else {
+          var freq = parseFrequencyString(val);
+          if(!freq){ alert('Could not understand that. Try a format like "2w" or "10d".'); return; }
+          type.freq = freq;
+        }
+        saveState();
+        renderManageContent();
+        renderCategories();
+      });
+    });
+
+    // cycle an activity's XP/HP multiplier tier (XS -> M -> XL -> XS)
+    manageContent.querySelectorAll('[data-cycle-mult]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-cycle-mult').split('|');
+        var cat = findCat(parts[0]);
+        var type = findType(cat, parts[1]);
+        cycleMultiplierTier(type);
+        saveState();
+        renderManageContent();
+        renderCategories();
+        var tier = getMultiplierTier(type);
+        showToast(type.name + ' now worth ' + tier.mult + 'x (' + tier.label + ' candy)');
+      });
+    });
+
     // delete category
     manageContent.querySelectorAll('[data-del-cat]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -1455,9 +1982,13 @@
       btn.addEventListener('click', function(){
         var catId = btn.getAttribute('data-quick-add');
         var input = document.getElementById('quickType_'+catId);
-        var name = input.value.trim();
-        if(!name) return;
-        findCat(catId).types.push({ id: uid('t'), name: name });
+        var raw = input.value.trim();
+        if(!raw) return;
+        var parsed = parseFrequencyFromName(raw);
+        if(!parsed.name) return;
+        var newType = { id: uid('t'), name: parsed.name };
+        if(parsed.freq) newType.freq = parsed.freq;
+        findCat(catId).types.push(newType);
         saveState();
         renderManageContent();
         renderCategories();
@@ -1468,13 +1999,16 @@
     document.getElementById('addCatBtn').addEventListener('click', function(){
       var nameInput = document.getElementById('newCatName');
       var iconInput = document.getElementById('newCatIcon');
+      var badInput = document.getElementById('newCatBad');
       var name = nameInput.value.trim();
       if(!name){ nameInput.focus(); return; }
-      var icon = iconInput.value.trim() || '📌';
-      state.categories.push({ id: uid('cat'), name: name, icon: icon, color: selectedColor, types: [] });
+      var isBad = !!(badInput && badInput.checked);
+      var icon = iconInput.value.trim() || (isBad ? '⚠' : '📌');
+      state.categories.push({ id: uid('cat'), name: name, icon: icon, color: selectedColor, isBad: isBad, types: [] });
       saveState();
       nameInput.value = '';
       iconInput.value = '';
+      if(badInput) badInput.checked = false;
       renderManageContent();
       renderCategories();
     });
@@ -1492,6 +2026,11 @@
 
   renderAll();
   fetchWeatherMessage();
+
+  // If a timer was left running (e.g. the page was refreshed), resume it rather than losing it.
+  if(state.activeTimer){
+    openTimerPopup(state.activeTimer.catId, state.activeTimer.typeId, state.activeTimer.startTs);
+  }
 })();
 </script>
 </body>
