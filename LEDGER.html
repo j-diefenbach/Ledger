@@ -16,7 +16,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#12151a">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&family=Kalam:wght@400;700&display=swap');
 
   :root{
     --bg:#12151a;
@@ -39,7 +39,12 @@
     --font-display:'Space Grotesk', 'Arial Black', sans-serif;
     --font-mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     --font-body:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-hand:'Kalam', 'Comic Sans MS', cursive;
     --radius:14px;
+    --paper:#fbf5e4;
+    --paper-line:#b9c4e8;
+    --paper-margin:#d98a82;
+    --journal-ink:#2c2416;
   }
 
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -108,6 +113,53 @@
   }
   .icon-btn:active{ background:var(--surface-3); }
 
+  /* ---------- Tabs ---------- */
+  .tabs-nav{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    padding:2px 16px 14px;
+  }
+  .tab-pill{
+    flex-shrink:0;
+    font-family:var(--font-mono);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    padding:7px 14px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    color:var(--text-dim);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .tab-pill.active{ background:var(--accent); color:#211505; border-color:var(--accent); }
+  .tab-pill:active{ filter:brightness(0.95); }
+
+  .tabs-scroller{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+  }
+  .tab-page{
+    flex:0 0 100%;
+    scroll-snap-align:start;
+    max-width:480px;
+    width:100%;
+    margin:0 auto;
+    padding:0 16px 24px;
+    box-sizing:border-box;
+    min-width:0;
+  }
+
   /* ---------- Category cards ---------- */
   /* ---------- Tamagotchi companion ---------- */
   .tama-card{
@@ -156,13 +208,9 @@
     overflow:hidden;
   }
   .tama-sprite{
-    /* width:100px; */
-    /* height:100px; */
     width:80px;
-    /* height:100px; */
     image-rendering:pixelated;
     image-rendering:crisp-edges;
-    /* animation:tamaBob 2.4s ease-in-out infinite; */
     filter:drop-shadow(0 3px 2px rgba(0,0,0,0.4));
   }
   @keyframes tamaBob{
@@ -346,6 +394,7 @@
     padding:14px 14px 14px;
     position:relative;
     overflow:hidden;
+    margin-bottom:12px;
   }
   .category-card::before{
     content:'';
@@ -684,6 +733,135 @@
   }
   .new-cat-form input[type="checkbox"]{ width:auto; margin:0; }
 
+  /* ---------- Journal widget (lined paper) ---------- */
+  .journal-card{
+    position:relative;
+    margin-bottom:12px;
+    border-radius:12px;
+    padding:16px 16px 14px 40px;
+    color:var(--journal-ink);
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(90deg, transparent 22px, var(--paper-margin) 22px, var(--paper-margin) 23px, transparent 23px),
+      repeating-linear-gradient(to bottom, transparent 0, transparent 26px, var(--paper-line) 26px, var(--paper-line) 27px);
+    box-shadow:0 1px 0 rgba(255,255,255,0.4) inset, 0 6px 16px rgba(0,0,0,0.25);
+    border:1px solid #e3d7ae;
+  }
+  .journal-header{ display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+  .journal-title{ font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--journal-ink); }
+  .journal-streak{
+    font-family:var(--font-mono); font-size:10.5px; font-weight:700; padding:2px 8px;
+    border-radius:20px; white-space:nowrap;
+  }
+  .journal-streak.active{ color:#8a4a1a; background:rgba(217,138,51,0.18); border:1px solid rgba(217,138,51,0.4); }
+  .journal-streak.stale{ color:#7a6f57; background:rgba(90,80,50,0.08); border:1px solid rgba(90,80,50,0.2); }
+  .journal-streak.none{ color:#8a8064; background:rgba(90,80,50,0.06); border:1px solid rgba(90,80,50,0.15); }
+  .journal-history-btn{
+    margin-left:auto;
+    background:rgba(44,36,22,0.08);
+    border:1px solid rgba(44,36,22,0.25);
+    color:var(--journal-ink);
+    font-family:var(--font-mono);
+    font-size:11px;
+    font-weight:700;
+    padding:5px 10px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .journal-textarea{
+    width:100%;
+    min-height:135px;
+    background:transparent;
+    border:none;
+    outline:none;
+    resize:vertical;
+    color:#1c2c56;
+    font-family:var(--font-hand);
+    font-size:16px;
+    line-height:27px;
+    padding:0;
+    margin:0;
+  }
+  .journal-textarea::placeholder{ color:rgba(44,36,22,0.4); font-family:var(--font-hand); }
+  .journal-footer{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    margin-top:6px; flex-wrap:wrap;
+  }
+  .journal-wordcount{ font-family:var(--font-mono); font-size:11.5px; font-weight:700; color:var(--journal-ink); }
+  .journal-tier-note{ font-family:var(--font-mono); font-size:10.5px; color:#7a6f4f; }
+  .journal-heatmap-wrap{ margin-top:10px; }
+  .journal-heatmap .heatmap-cell{ border:1px solid rgba(44,36,22,0.08); }
+  .journal-heatmap .heatmap-divider{ background:var(--paper-margin); }
+
+  .journal-history-list{ display:flex; flex-direction:column; gap:8px; }
+  .journal-history-item{
+    display:flex; align-items:center; gap:10px;
+    width:100%; text-align:left;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--text);
+    border-radius:10px; padding:9px 11px; cursor:pointer; font-family:var(--font-body);
+  }
+  .journal-history-item:active{ background:var(--surface-3); }
+  .journal-history-date{ font-family:var(--font-display); font-weight:700; font-size:12.5px; flex-shrink:0; width:82px; }
+  .journal-history-preview{ flex:1; min-width:0; font-size:12px; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .journal-history-words{ font-family:var(--font-mono); font-size:11px; color:var(--accent2); flex-shrink:0; }
+  .journal-entry-full{
+    background:var(--paper); color:var(--journal-ink); border-radius:10px; padding:14px;
+    font-family:var(--font-hand); font-size:15px; line-height:1.6; white-space:pre-wrap;
+    border:1px solid #e3d7ae; max-height:50vh; overflow-y:auto;
+  }
+  .journal-entry-meta{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:8px; }
+
+  /* ---------- Calendar overview ---------- */
+  .calendar-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px;
+    margin-bottom:12px;
+  }
+  .calendar-header{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .calendar-header .chip-freq-btn{ font-size:16px; padding:0 6px; }
+  .calendar-month-label{ font-family:var(--font-display); font-weight:700; font-size:14px; flex:1; text-align:center; }
+  .calendar-today-btn{
+    background:none; border:1px solid var(--line); color:var(--accent2);
+    font-family:var(--font-mono); font-size:11px; padding:4px 9px; border-radius:14px; cursor:pointer;
+  }
+  .calendar-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .calendar-weekdays{ margin-bottom:4px; }
+  .cal-weekday{ text-align:center; font-family:var(--font-mono); font-size:10px; color:var(--text-faint); }
+  .cal-day-cell{
+    aspect-ratio:1;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:4px 2px 3px;
+    cursor:pointer;
+    position:relative;
+    color:var(--text);
+    font-family:var(--font-mono);
+  }
+  .cal-day-empty{ visibility:hidden; cursor:default; border:none; background:none; }
+  .cal-day-num{ font-size:11px; font-weight:700; }
+  .cal-today .cal-day-num{ color:var(--accent); }
+  .cal-selected{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; }
+  .cal-day-dots{ display:flex; gap:2px; flex-wrap:wrap; justify-content:center; margin-top:3px; max-width:100%; }
+  .cal-dot{ width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .cal-dot-journal{ width:auto; height:auto; font-size:7px; background:none !important; line-height:1; }
+
+  .calendar-detail{ margin-top:12px; border-top:1px dashed var(--line); padding-top:10px; }
+  .calendar-detail-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-family:var(--font-display); font-size:13px; }
+  .calendar-detail-head .chip-freq-btn{ font-size:16px; }
+  .cal-detail-total{ font-family:var(--font-mono); font-size:11px; color:var(--accent2); margin-bottom:6px; }
+  .cal-detail-row{ display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid var(--line); font-size:12.5px; }
+  .cal-detail-row:last-child{ border-bottom:none; }
+  .cal-detail-name{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cal-detail-mins{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); }
+  .cal-detail-journal{ margin-top:8px; font-family:var(--font-mono); font-size:11px; color:var(--accent2); }
+
   /* ---------- Timer popup ---------- */
   .timer-card{ text-align:center; }
   .timer-screen{
@@ -727,6 +905,7 @@
   .timer-actions .mini-danger{ padding:12px; font-size:13px; border-radius:10px; }
 
   /* ---------- Recent log (ticket stubs) ---------- */
+  .recent-log{ margin-bottom:8px; }
   .recent-log h2{
     font-family:var(--font-display);
     font-size:14px;
@@ -839,6 +1018,19 @@
     padding:0 12px; font-size:12px; font-weight:700; cursor:pointer;
   }
 
+  .tab-manage-block{
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:10px;
+    margin-bottom:8px;
+    background:var(--surface-3);
+  }
+  .tab-manage-head{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .tab-name-input{
+    flex:1; background:var(--surface-2); border:1px solid var(--line); color:var(--text);
+    padding:7px 9px; border-radius:7px; font-size:13px; font-family:var(--font-body);
+  }
+
   .new-cat-form{
     border-top:1px solid var(--line);
     padding-top:14px;
@@ -871,61 +1063,18 @@
 
 <div id="app">
   <div class="topbar">
-    <!-- <div class="stamp-mark">L</div> -->
     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeBAMAAADJHrORAAAAIVBMVEUhISEhISFKUlJ7e4ScSjqlpcXeWjrezvf/lDr/1jr///+Mng2PAAAAAXRSTlMAQObYZgAAAH5JREFUGNNjYKALEBQUROF2dHQgCTACuR1tAnC+xEyQQCJcunPVDCA/TQAHX6IDrD4tEc4Hm4eTLwLmp6U5QvlCHk1KQG6KIoyvpLpULc1JCcZnNNJapaSkpAy3v8p0KZBbCnew+GLj8vLyQIR/woHcUAEk/4aGhgriCQ/aAQCfHi5ulbG+aAAAAABJRU5ErkJggg==">
     <h1>PokeLog<span>.</span></h1>
     <button class="icon-btn" id="manageBtn" aria-label="Manage categories">
       <img width="32" height="32" src="https://img.pokemondb.net/sprites/black-white/normal/klink.png"/>
-      <!-- <img src="https://github.com/PokeAPI/sprites/blob/master/sprites/items/leftovers.png?raw=true"/> -->
     </button>
     <button class="icon-btn" id="bag" aria-label="Bag">
       <img src="https://github.com/PokeAPI/sprites/blob/master/sprites/items/gen5/berry-pouch.png?raw=true"/>
     </button>
   </div>
 
-  <div class="tama-card" id="tamaCard">
-    <!-- <div class="tama-screws"><span></span><span></span><span></span><span></span></div> -->
-    <div class="tama-screen">
-      <div class="tama-lvl-badge" id="tamaLvlBadge">Lv 1</div>
-      <img class="tama-sprite" id="tamaSprite" src="" alt="Companion sprite">
-    </div>
-    <div class="tama-info">
-      <div class="tama-name-row">
-        <span class="tama-name" id="tamaName">—</span>
-        <div class="tama-pips" id="tamaPips"><span></span><span></span><span></span></div>
-      </div>
-      <div class="hp-row">
-        <div class="hp-track"><div class="hp-fill" id="tamaHpFill"></div></div>
-        <span class="hp-label" id="tamaHpLabel">100 / 100 HP</span>
-      </div>
-      <div class="tama-caption" id="tamaCaption">This week's companion</div>
-      <div class="xp-track"><div class="xp-fill" id="tamaXpFill"></div></div>
-      <div class="xp-label" id="tamaXpLabel">0 / 100 XP</div>
-    </div>
-  </div>
-
-  <div class="daily-todo-card" id="dailyTodoCard">
-    <div class="daily-todo-header">
-      <span class="daily-todo-title">🎯 Today's 3 things</span>
-      <span class="daily-todo-date" id="dailyTodoDate"></span>
-    </div>
-    <div class="daily-todo-list" id="dailyTodoList"></div>
-  </div>
-
-  <div class="sleep-card" id="sleepCard">
-    <div class="sleep-header">
-      <span class="sleep-title">😴 Sleep</span>
-      <button class="chip-freq-btn" id="sleepEditBtn" title="Adjust sleep/wake times">✎ Edit</button>
-    </div>
-    <div class="sleep-body" id="sleepBody"></div>
-  </div>
-
-  <div class="category-list" id="categoryList"></div>
-
-  <div class="recent-log">
-    <h2>Recent activity</h2>
-    <ul class="log-list" id="logList"></ul>
-  </div>
+  <div class="tabs-nav" id="tabsNav"></div>
+  <div class="tabs-scroller" id="tabsScroller"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -934,7 +1083,7 @@
 <div class="modal-overlay hidden" id="manageModal">
   <div class="modal-card">
     <button class="modal-close" data-close="manageModal">&times;</button>
-    <h2>Manage categories</h2>
+    <h2>Manage</h2>
     <div id="manageContent"></div>
   </div>
 </div>
@@ -944,6 +1093,14 @@
   <div class="modal-card">
     <button class="modal-close" data-close="detailModal">&times;</button>
     <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- Journal history popup: past entries list + read-only entry view -->
+<div class="modal-overlay hidden" id="journalModal">
+  <div class="modal-card">
+    <button class="modal-close" data-close="journalModal">&times;</button>
+    <div id="journalModalContent"></div>
   </div>
 </div>
 
@@ -971,14 +1128,8 @@
   var CAT_COLORS = ['#e8a33d','#4fa8a0','#c76b98','#7ea6d9','#8bbf5a','#d9695a'];
 
   /* ---------------- Companion (Gen I & II starters) ---------------- */
-  // Sprites are the classic Pokémon Black & White front sprites, served from the
-  // PokeAPI/sprites GitHub repo (community-hosted mirror, safe to hotlink/cache).
-  
   var SPRITE_BASE = 'https://github.com/PokeAPI/sprites/raw/master/sprites/pokemon/versions/generation-v/black-white/animated/'
-  // var SPRITE_BASE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/';
   function spriteUrl(id){ return SPRITE_BASE + id + '.gif'; }
-
-  // Starter Pokémon lines (Gen I, II, III, IV, V)
 
   var type_x_weather_condition_messages = {
     grass: {
@@ -1031,7 +1182,7 @@
       stormy: ["Stormy weather makes it hard for your Water-type Pokémon to stay focused."],
       cold: ["Cold weather can slow down your Water-type Pokémon's movements."],
       mild: ["Mild weather is great for your Water-type Pokémon."],
-      hot: ["Hot weather can be a bit draining for your Water-type Pokémon.", 
+      hot: ["Hot weather can be a bit draining for your Water-type Pokémon.",
             "Your Water-type Pokémon is enjoying the warm weather, but be careful not to overheat!",
           "Your Water-type Pokémon wants to go to the beach and splash around in the water!"],
       misc: [
@@ -1088,23 +1239,6 @@
     { type: 'grass', stages: [ {id: 495, name: 'Snivy' }, { id: 496, name: 'Servine' }, { id: 497, name: 'Serperior' } ] },
     { type: 'fire', stages: [ {id: 498, name: 'Tepig' }, { id: 499, name: 'Pignite' }, { id: 500, name: 'Emboar' } ] },
     { type: 'water', stages: [ {id: 501, name: 'Oshawott' }, { id: 502, name: 'Dewott' }, { id: 503, name: 'Samurott' } ] }
-
-    // // legendary pokemon
-    // { stages: [ {id: 144, name: 'Articuno' }, { id: 145, name: 'Zapdos' }, { id: 146, name: 'Moltres' } ] },
-    // { stages: [ {id: 150, name: 'Mewtwo' }, { id: 151, name: 'Mew' }, { id: 493, name: 'Arceus' } ] },
-    // { stages: [ {id: 249, name: 'Lugia' }, { id: 250, name: 'Ho-Oh' }, { id: 251, name: 'Celebi' } ] },
-    // { stages: [ {id: 377, name: 'Regirock' }, { id: 378, name: 'Regice' }, { id: 379, name: 'Registeel' } ] },
-    // { stages: [ {id: 380, name: 'Latias' }, { id: 381, name: 'Latios' }, { id: 382, name: 'Kyogre' } ] },
-    // { stages: [ {id: 383, name: 'Groudon' }, { id: 384, name: 'Rayquaza' }, { id: 385, name: 'Jirachi' } ] },
-    // { stages:[ {id: 643, name: 'Reshiram' }, { id: 644, name: 'Zekrom' }, { id: 646, name: 'Kyurem' } ] },
-    // { stages:[ {id: 638, name: 'Cobalion' }, { id: 639, name: 'Terrakion' }, { id: 640, name: 'Virizion' } ] },
-    // { stages:[ {id: 641, name: 'Tornadus' }, { id: 642, name: 'Thundurus' }, { id: 645, name: 'Landorus' } ] },
-
-    // // other pokemon
-    // { stages: [ {id: 595, name: 'Joltik' }, { id: 596, name: 'Galvantula' }, { id: 597, name: 'Ferroseed' } ] },
-    // { stages: [ {id: 599, name: 'Klink' }, { id: 600, name: 'Klang' }, { id: 601, name: 'Klinklang' } ] },
-    // { stages: [ {id: 602, name: 'Tynamo' },{ id: 603, name: 'Eelektrik' }, {id: 604, name: 'Eelektross' } ] },
-
   ];
 
   var EVOLVE_AT_LEVEL = [1, 5, 9]; // level thresholds for stage 0 / 1 / 2 (final)
@@ -1118,7 +1252,6 @@
   function healthRestoreForLevel(level){ return 15 + level * 2; }       // daily regen also grows with level
 
   /* ---------------- Per-activity XP/HP multiplier (Exp. Candy tiers) ---------------- */
-  // Some activities are worth more per minute than others — tag them with a bigger candy.
   var MULTIPLIER_TIERS = [
     { key: 'xs', mult: 1,   label: 'XS', sprite: 'https://static.wikia.nocookie.net/pokemon/images/8/83/Exp._Candy_XS_sprite.png/revision/latest?cb=20201206064558' },
     { key: 'm',  mult: 1.5, label: 'M',  sprite: 'https://static.wikia.nocookie.net/pokemon/images/b/bd/Exp._Candy_M_sprite.png/revision/latest?cb=20201206064637' },
@@ -1149,11 +1282,8 @@
 
     var tier = getMultiplierTier(type);
     if(cat.isBad){
-      // Bad habits (e.g. doomscrolling) damage the companion's HP instead of granting XP.
       damagePokemonHealth(Math.round(mins * BAD_HEALTH_PER_MINUTE * tier.mult), type.name);
     } else {
-      // Award companion XP: 10 XP/minute (15 min = 150 XP), plus a bonus for an active streak,
-      // then scaled by the activity's own XP multiplier tier.
       var postStreak = streakInfo(entriesFor(catId, typeId));
       var xpGain = mins * XP_PER_MINUTE;
       if(postStreak.type === 'active' && postStreak.streak >= 2){
@@ -1162,8 +1292,7 @@
       addPokemonXp(Math.round(xpGain * tier.mult));
     }
 
-    renderCategories();
-    renderLog();
+    renderTabs();
   }
 
   // Cumulative XP required to REACH level n+1, starting from level 1 at 0 XP.
@@ -1184,7 +1313,8 @@
   };
 
   var state = loadState();
-  var openTypeByCat = {}; // catId -> typeId currently expanded in that card
+  var openTypeByCat = {}; // catId -> typeId currently expanded in that card (legacy, unused but harmless)
+  var currentTabIndex = 0;
 
   function loadState(){
     try{
@@ -1209,6 +1339,38 @@
 
   function uid(prefix){
     return (prefix||'id') + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,7);
+  }
+
+  /* ---------------- Tabs (layout) ---------------- */
+  // Widgets are referenced by key: 'companion', 'dailyTodos', 'sleep', 'history', or a category id.
+  // Each tab has an ordered widget list. Companion defaults to the first slot of every tab.
+  function ensureTabs(){
+    if(!state.tabs || !state.tabs.length){
+      var widgets = ['companion', 'dailyTodos', 'sleep', 'journal', 'calendar'];
+      state.categories.forEach(function(c){ widgets.push(c.id); });
+      widgets.push('history');
+      state.tabs = [{ id: uid('tab'), name: 'Main', widgets: widgets }];
+      saveState();
+    }
+    if(currentTabIndex >= state.tabs.length) currentTabIndex = Math.max(0, state.tabs.length - 1);
+  }
+
+  function widgetLabel(key){
+    if(key === 'companion') return '🐾 Companion';
+    if(key === 'dailyTodos') return '🎯 Today\'s 3';
+    if(key === 'sleep') return '😴 Sleep';
+    if(key === 'journal') return '📓 Journal';
+    if(key === 'calendar') return '📅 Calendar';
+    if(key === 'history') return '📜 History';
+    var cat = findCat(key);
+    return cat ? (cat.icon || '📌') + ' ' + escapeHtml(cat.name) : '(removed)';
+  }
+
+  function availableWidgetOptions(tab){
+    var all = [['companion', '🐾 Companion'], ['dailyTodos', '🎯 Today\'s 3'], ['sleep', '😴 Sleep'], ['journal', '📓 Journal'], ['calendar', '📅 Calendar'], ['history', '📜 History']];
+    state.categories.forEach(function(c){ all.push([c.id, (c.icon || '📌') + ' ' + c.name]); });
+    return all.filter(function(pair){ return tab.widgets.indexOf(pair[0]) === -1; })
+      .map(function(pair){ return '<option value="' + pair[0] + '">' + escapeHtml(pair[1]) + '</option>'; }).join('');
   }
 
   /* ---------------- Companion helpers ---------------- */
@@ -1237,8 +1399,6 @@
     }
   }
 
-  // Restores HP once per elapsed calendar day (catches up if the app wasn't opened for a few days).
-  // Also initializes health/lastHealthDate the first time a companion is seen (e.g. right after a reroll).
   function ensureHealth(level){
     var max = maxHealthForLevel(level);
     if(state.pokemon.health == null || !state.pokemon.lastHealthDate){
@@ -1287,7 +1447,6 @@
     state.pokemon.xp += amount;
     saveState();
     var after = getPokemonInfo();
-    renderPokemon();
     if(after.stageIdx > before.stageIdx){
       showToast('✨ ' + before.stage.name + ' evolved into ' + after.stage.name + '!');
     } else {
@@ -1300,7 +1459,6 @@
     var info = getPokemonInfo(); // ensures health is initialized/regenerated first
     state.pokemon.health = Math.max(0, info.health - amount);
     saveState();
-    renderPokemon();
     if(state.pokemon.health <= 0){
       showToast('💢 -' + amount + ' HP from ' + label + '. ' + info.stage.name + ' has fainted!');
     } else {
@@ -1353,9 +1511,6 @@
   }
 
   /* ---------------- Frequency (recurring habits) ---------------- */
-  // Auto-detects a trailing shorthand like "2w" or "10 days" in a typed name, e.g.
-  // "Wash sheets 2w" -> { name: "Wash sheets", freq: {n:2, unit:'w'} }.
-  // Returns freq:null if no recognizable trailing frequency token is present.
   function parseFrequencyFromName(rawName){
     var trimmed = (rawName || '').trim();
     var m = trimmed.match(/^(.*\S)\s*[-–,]?\s*(\d+)\s*(days|day|weeks|week|wks|wk|d|w)\s*$/i);
@@ -1367,7 +1522,6 @@
     return { name: cleanName, freq: { n: n, unit: unit } };
   }
 
-  // Parses a standalone frequency string like "2w" or "10 days" (used by the manual editor).
   function parseFrequencyString(val){
     var m = (val || '').trim().match(/^(\d+)\s*(days|day|weeks|week|wks|wk|d|w)$/i);
     if(!m) return null;
@@ -1385,7 +1539,6 @@
 
   function freqRequiredDays(freq){ return freq.unit === 'w' ? freq.n * 7 : freq.n; }
 
-  // Days since the most recent log for a set of entries. Infinity if never logged.
   function daysSinceLastLog(entries){
     if(!entries.length) return Infinity;
     var mostRecentTs = entries.reduce(function(max, e){ return Math.max(max, e.ts); }, 0);
@@ -1412,9 +1565,7 @@
     return 4;
   }
 
-  // Oldest-to-newest array of 14 daily totals (minutes) for a given activity.
   function heatmapCells(catId, typeId){
-    // Add divider for sunday-monday (each new week)
     var minutesByDate = {};
     entriesFor(catId, typeId).forEach(function(e){
       var d = localDateStr(e.ts);
@@ -1439,6 +1590,265 @@
     }).join('') + '</div>';
   }
 
+  /* ---------------- Journal ---------------- */
+  // state.journal: { 'YYYY-MM-DD': { text, words, tierAwarded, ts } }
+  var JOURNAL_TIERS = [
+    { words: 100, xp: 50 },
+    { words: 250, xp: 150 },
+    { words: 500, xp: 350 }
+  ];
+  var JOURNAL_HEAT = ['rgba(44,36,22,0.08)', '#d9b98a', '#c08f4e', '#96602a', '#6b3e12'];
+  var journalSaveDebounce = null;
+
+  function countWords(text){
+    var trimmed = (text || '').trim();
+    if(!trimmed) return 0;
+    return trimmed.split(/\s+/).length;
+  }
+
+  function journalXpForWords(words){
+    var xp = 0;
+    JOURNAL_TIERS.forEach(function(t){ if(words >= t.words) xp = t.xp; });
+    return xp;
+  }
+
+  function journalTierNote(words){
+    for(var i=0; i<JOURNAL_TIERS.length; i++){
+      if(words < JOURNAL_TIERS[i].words){
+        return (JOURNAL_TIERS[i].words - words) + ' words to next milestone (' + JOURNAL_TIERS[i].words + ')';
+      }
+    }
+    return 'All milestones reached today ✨';
+  }
+
+  function journalEntries(){
+    if(!state.journal) return [];
+    return Object.keys(state.journal).filter(function(d){ return state.journal[d].words > 0; })
+      .map(function(d){ return { ts: dateFromStr(d).getTime() + 43200000 }; });
+  }
+
+  function journalStreakInfo(){ return streakInfo(journalEntries()); }
+
+  function journalHeatLevel(words){
+    if(words <= 0) return 0;
+    if(words < 100) return 1;
+    if(words < 250) return 2;
+    if(words < 500) return 3;
+    return 4;
+  }
+
+  function journalHeatmapCells(){
+    var cells = [];
+    for(var i = 13; i >= 0; i--){
+      var d = localDateStr(Date.now() - i * 86400000);
+      var words = (state.journal && state.journal[d] && state.journal[d].words) || 0;
+      cells.push(words);
+      if(i > 0 && new Date(d).getDay() === 0){ cells.push(-1); }
+    }
+    return cells;
+  }
+
+  function journalHeatmapHtml(large){
+    var cells = journalHeatmapCells();
+    return '<div class="heatmap journal-heatmap'+(large?' large':'')+'">' + cells.map(function(w){
+      if(w < 0) return '<span class="heatmap-divider"></span>';
+      return '<span class="heatmap-cell" style="background:'+JOURNAL_HEAT[journalHeatLevel(w)]+'" title="'+w+' words"></span>';
+    }).join('') + '</div>';
+  }
+
+  function journalStreakBadgeHtml(){
+    var s = journalStreakInfo();
+    if(s.type === 'active') return '<span class="journal-streak active">🔥 ' + s.streak + 'd</span>';
+    if(s.type === 'stale') return '<span class="journal-streak stale">' + s.daysAgo + 'd since</span>';
+    return '<span class="journal-streak none">No entries yet</span>';
+  }
+
+  function journalHtml(){
+    var today = todayKey();
+    if(!state.journal) state.journal = {};
+    var entry = state.journal[today] || { text: '', words: 0, tierAwarded: 0 };
+    var words = entry.words || 0;
+
+    return '<div class="journal-card">' +
+      '<div class="journal-header">' +
+        '<span class="journal-title">📓 Journal</span>' +
+        journalStreakBadgeHtml() +
+        '<button class="journal-history-btn" data-journal-history>History</button>' +
+      '</div>' +
+      '<textarea class="journal-textarea" data-journal-input rows="6" placeholder="Write about your day…">' + escapeHtml(entry.text) + '</textarea>' +
+      '<div class="journal-footer">' +
+        '<span class="journal-wordcount" data-journal-wordcount>' + words + ' word' + (words===1?'':'s') + '</span>' +
+        '<span class="journal-tier-note">' + journalTierNote(words) + '</span>' +
+      '</div>' +
+      '<div class="journal-heatmap-wrap">' + journalHeatmapHtml(false) + '</div>' +
+    '</div>';
+  }
+
+  // Live word-count/XP handling on every keystroke, deliberately WITHOUT a full renderTabs()
+  // rebuild — replacing the textarea's innerHTML while the user is typing would steal focus
+  // and reset the cursor. Only the small counter/note text inside this widget is patched in
+  // place; a full re-render (refreshing streak/heatmap/companion everywhere) happens on blur.
+  function journalHandleInput(textarea){
+    var today = todayKey();
+    if(!state.journal) state.journal = {};
+    if(!state.journal[today]) state.journal[today] = { text: '', words: 0, tierAwarded: 0, ts: Date.now() };
+    var rec = state.journal[today];
+    rec.text = textarea.value;
+    rec.words = countWords(textarea.value);
+    rec.ts = Date.now();
+
+    clearTimeout(journalSaveDebounce);
+    journalSaveDebounce = setTimeout(saveState, 400);
+
+    var newXp = journalXpForWords(rec.words);
+    if(newXp > (rec.tierAwarded || 0)){
+      var gain = newXp - (rec.tierAwarded || 0);
+      rec.tierAwarded = newXp;
+      saveState();
+      addPokemonXp(gain);
+    }
+
+    var card = textarea.closest('.journal-card');
+    if(card){
+      var wc = card.querySelector('[data-journal-wordcount]');
+      if(wc) wc.textContent = rec.words + ' word' + (rec.words===1?'':'s');
+      var note = card.querySelector('.journal-tier-note');
+      if(note) note.textContent = journalTierNote(rec.words);
+    }
+  }
+
+  function renderJournalHistoryList(){
+    if(!state.journal) state.journal = {};
+    var days = Object.keys(state.journal).filter(function(d){ return (state.journal[d].text || '').trim().length > 0; }).sort().reverse();
+    if(!days.length) return '<div class="empty-state">No journal entries yet.</div>';
+    return '<div class="journal-history-list">' + days.map(function(d){
+      var rec = state.journal[d];
+      var previewSrc = (rec.text || '').trim().replace(/\s+/g, ' ');
+      var preview = previewSrc.slice(0, 80);
+      var dLabel = dateFromStr(d).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+      return '<button class="journal-history-item" data-journal-view="'+d+'">' +
+        '<span class="journal-history-date">'+dLabel+'</span>' +
+        '<span class="journal-history-preview">'+escapeHtml(preview)+(previewSrc.length>80?'…':'')+'</span>' +
+        '<span class="journal-history-words">'+(rec.words||0)+'w</span>' +
+      '</button>';
+    }).join('') + '</div>';
+  }
+
+  function openJournalHistory(){
+    document.getElementById('journalModalContent').innerHTML = '<h2>Journal history</h2>' + renderJournalHistoryList();
+    document.getElementById('journalModal').classList.remove('hidden');
+  }
+
+  function viewJournalEntry(dateKey){
+    var rec = state.journal && state.journal[dateKey];
+    if(!rec){ openJournalHistory(); return; }
+    var dLabel = dateFromStr(dateKey).toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById('journalModalContent').innerHTML =
+      '<button class="chip-freq-btn" data-journal-back style="margin-bottom:10px;">← Back</button>' +
+      '<h2 style="margin-top:0;">' + dLabel + '</h2>' +
+      '<div class="journal-entry-full">' + escapeHtml(rec.text || '') + '</div>' +
+      '<div class="journal-entry-meta">' + (rec.words||0) + ' words</div>';
+  }
+
+  /* ---------------- Calendar overview ---------------- */
+  var calendarViewMonth = (function(){ var d = new Date(); return { year: d.getFullYear(), month: d.getMonth() }; })();
+  var calendarSelectedDay = null;
+  var CAL_HEAT = ['rgba(255,255,255,0.04)', 'rgba(79,168,160,0.18)', 'rgba(79,168,160,0.38)', 'rgba(79,168,160,0.6)', 'rgba(79,168,160,0.85)'];
+
+  function calendarHeatLevel(mins){
+    if(mins <= 0) return 0;
+    if(mins < 20) return 1;
+    if(mins < 45) return 2;
+    if(mins < 90) return 3;
+    return 4;
+  }
+
+  // date -> { mins: total minutes across every category that day, cats: {catId:true, ...} }
+  function calendarDayTotals(){
+    var map = {};
+    state.logs.forEach(function(l){
+      var d = localDateStr(l.ts);
+      if(!map[d]) map[d] = { mins: 0, cats: {} };
+      map[d].mins += l.minutes;
+      map[d].cats[l.catId] = true;
+    });
+    return map;
+  }
+
+  function calendarDayDetailHtml(dStr){
+    var entries = state.logs.filter(function(l){ return localDateStr(l.ts) === dStr; });
+    var dLabel = dateFromStr(dStr).toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+    var totalMins = entries.reduce(function(s,e){ return s + e.minutes; }, 0);
+    var journalRec = state.journal && state.journal[dStr];
+
+    var rows = entries.slice().sort(function(a,b){ return b.ts - a.ts; }).map(function(e){
+      var cat = findCat(e.catId);
+      var type = cat && findType(cat, e.typeId);
+      return '<div class="cal-detail-row">' +
+        '<span class="cal-dot" style="background:'+(cat ? (cat.color||'#4fa8a0') : '#666')+'"></span>' +
+        '<span class="cal-detail-name">'+(cat ? escapeHtml(cat.name) : '—')+' — '+(type ? escapeHtml(type.name) : 'Deleted activity')+'</span>' +
+        '<span class="cal-detail-mins">'+fmtDuration(e.minutes)+'</span>' +
+      '</div>';
+    }).join('');
+
+    return '<div class="calendar-detail">' +
+      '<div class="calendar-detail-head"><strong>'+dLabel+'</strong><button class="chip-freq-btn" data-cal-day="'+dStr+'" title="Close">&times;</button></div>' +
+      (entries.length ? ('<div class="cal-detail-total">'+fmtDuration(totalMins)+' total</div>' + rows) : '<div class="empty-state" style="padding:14px;">No activity logged.</div>') +
+      (journalRec && journalRec.words ? '<div class="cal-detail-journal">📓 Journal: '+journalRec.words+' words</div>' : '') +
+    '</div>';
+  }
+
+  function calendarHtml(){
+    var y = calendarViewMonth.year, m = calendarViewMonth.month;
+    var totals = calendarDayTotals();
+    var journalMap = state.journal || {};
+
+    var firstOfMonth = new Date(y, m, 1);
+    var startWeekday = firstOfMonth.getDay();
+    var daysInMonth = new Date(y, m+1, 0).getDate();
+    var monthLabel = firstOfMonth.toLocaleDateString([], { month: 'long', year: 'numeric' });
+    var todayStr = localDateStr(Date.now());
+
+    var cells = '';
+    for(var i=0; i<startWeekday; i++){ cells += '<div class="cal-day-cell cal-day-empty"></div>'; }
+    for(var day=1; day<=daysInMonth; day++){
+      var dStr = localDateStr(new Date(y, m, day).getTime());
+      var info = totals[dStr];
+      var mins = info ? info.mins : 0;
+      var level = calendarHeatLevel(mins);
+      var catIds = info ? Object.keys(info.cats) : [];
+      var dotsHtml = catIds.slice(0, 4).map(function(cid){
+        var cat = findCat(cid);
+        var color = cat ? (cat.color || '#4fa8a0') : '#666';
+        return '<span class="cal-dot" style="background:'+color+'" title="'+(cat?escapeAttr(cat.name):'')+'"></span>';
+      }).join('');
+      if(journalMap[dStr] && journalMap[dStr].words > 0){
+        dotsHtml += '<span class="cal-dot-journal" title="Journal entry">📓</span>';
+      }
+      var isToday = dStr === todayStr;
+      var isSelected = calendarSelectedDay === dStr;
+      cells += '<button class="cal-day-cell'+(isToday?' cal-today':'')+(isSelected?' cal-selected':'')+'" data-cal-day="'+dStr+'" style="background:'+CAL_HEAT[level]+'" title="'+mins+'m logged">' +
+        '<span class="cal-day-num">'+day+'</span>' +
+        (dotsHtml ? '<div class="cal-day-dots">'+dotsHtml+'</div>' : '') +
+      '</button>';
+    }
+
+    var weekdayLabels = ['S','M','T','W','T','F','S'].map(function(l){ return '<div class="cal-weekday">'+l+'</div>'; }).join('');
+    var detailHtml = calendarSelectedDay ? calendarDayDetailHtml(calendarSelectedDay) : '';
+
+    return '<div class="calendar-card">' +
+      '<div class="calendar-header">' +
+        '<button class="chip-freq-btn" data-cal-nav="-1" title="Previous month">‹</button>' +
+        '<span class="calendar-month-label">'+monthLabel+'</span>' +
+        '<button class="chip-freq-btn" data-cal-nav="1" title="Next month">›</button>' +
+        '<button class="calendar-today-btn" data-cal-today>Today</button>' +
+      '</div>' +
+      '<div class="calendar-grid calendar-weekdays">'+weekdayLabels+'</div>' +
+      '<div class="calendar-grid">'+cells+'</div>' +
+      detailHtml +
+    '</div>';
+  }
+
   /* ---------------- Checklist items (done/not-done instead of a duration) ---------------- */
   var CHECKLIST_MINUTES = 15; // "done" is worth the same as a 15-min log, scaled by the candy multiplier
   function isDoneToday(catId, typeId){
@@ -1459,44 +1869,7 @@
     return state.dailyTodos[key];
   }
 
-  function renderDailyTodos(){
-    var items = ensureDailyTodos();
-    document.getElementById('dailyTodoDate').textContent =
-      new Date().toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
-
-    var list = document.getElementById('dailyTodoList');
-    list.innerHTML = items.map(function(item, idx){
-      return '<div class="daily-todo-row'+(item.done?' done':'')+'">' +
-        '<button class="daily-todo-check'+(item.done?' done':'')+'" data-idx="'+idx+'">'+(item.done?'✓':'')+'</button>' +
-        '<input type="text" class="daily-todo-input" data-idx="'+idx+'" placeholder="Add a goal for today…" maxlength="60">' +
-      '</div>';
-    }).join('');
-
-    // Set values via the DOM property (not an HTML attribute) so free text with quotes
-    // or special characters can never break the markup.
-    list.querySelectorAll('.daily-todo-input').forEach(function(input, idx){
-      input.value = items[idx].text;
-      input.addEventListener('change', function(){
-        var arr = ensureDailyTodos();
-        arr[idx].text = input.value;
-        saveState();
-      });
-    });
-    list.querySelectorAll('.daily-todo-check').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var idx = parseInt(btn.getAttribute('data-idx'), 10);
-        var arr = ensureDailyTodos();
-        arr[idx].done = !arr[idx].done;
-        saveState();
-        renderDailyTodos();
-      });
-    });
-  }
-
   /* ---------------- Sleep tracker ---------------- */
-  // Approximates bedtime/wake time from real usage: a "heartbeat" keeps state.lastOpenTs
-  // fresh to roughly the last moment the app was actually open, so when the app is opened
-  // again after a long, night-shaped gap we can infer sleep -> wake.
   var SLEEP_HEARTBEAT_MS = 60000;
 
   function fmtClock(ts){
@@ -1511,9 +1884,6 @@
     return h * 60 + mnt;
   }
 
-  // Runs once per page load. If the gap since the last recorded activity looks like an
-  // overnight gap (last seen in the evening, now seeing it in the morning), record a
-  // sleep/wake pair for that night.
   function trackSleepWake(){
     var now = Date.now();
     var prev = state.lastOpenTs;
@@ -1541,24 +1911,7 @@
     return { key: keys[0], entry: state.sleepLog[keys[0]] };
   }
 
-  function renderSleep(){
-    var body = document.getElementById('sleepBody');
-    var latest = getLatestSleepEntry();
-    if(!latest){
-      body.innerHTML = '<div class="sleep-empty">No sleep detected yet — open the app once in the evening and again the next morning, and it will show up here.</div>';
-      return;
-    }
-    var e = latest.entry;
-    var durMin = Math.max(0, Math.round((e.wake - e.sleep) / 60000));
-    body.innerHTML =
-      '<div class="sleep-times">' +
-        '<div class="sleep-stat"><span class="sleep-stat-label">Asleep</span><span class="sleep-stat-value">'+fmtClock(e.sleep)+'</span></div>' +
-        '<div class="sleep-stat"><span class="sleep-stat-label">Awake</span><span class="sleep-stat-value">'+fmtClock(e.wake)+'</span></div>' +
-        '<div class="sleep-stat"><span class="sleep-stat-label">Total</span><span class="sleep-stat-value">'+fmtDuration(durMin)+'</span></div>' +
-      '</div>';
-  }
-
-  document.getElementById('sleepEditBtn').addEventListener('click', function(){
+  function openSleepEditor(){
     var latest = getLatestSleepEntry();
     if(!latest){ alert('No sleep detected yet to adjust — it shows up after an evening + next-morning app open.'); return; }
     var e = latest.entry;
@@ -1573,8 +1926,6 @@
     var wakeMin = parseTimeStr(wakeStr);
     if(sleepMin == null || wakeMin == null){ alert('Please use HH:MM, e.g. 23:15'); return; }
 
-    // Bedtime lands on the "night" date; if the chosen clock time reads as morning-ish,
-    // assume it rolled past midnight into the following date.
     var nightDate = dateFromStr(latest.key);
     var newSleep = new Date(nightDate);
     newSleep.setHours(Math.floor(sleepMin / 60), sleepMin % 60, 0, 0);
@@ -1585,9 +1936,6 @@
     var newWake = new Date(wakeDate);
     newWake.setHours(Math.floor(wakeMin / 60), wakeMin % 60, 0, 0);
 
-    // Guardrails so the numbers stay honest: bedtime can't be earlier than the last time the
-    // app was actually open that night, and wake time can't be more than 30 min earlier than
-    // when the app was actually first opened that morning.
     if(newSleep.getTime() < e.autoSleep){
       alert('Bedtime can\'t be earlier than ' + fmtClock(e.autoSleep) + ' — that\'s the last time the app was open that night.');
       return;
@@ -1600,9 +1948,9 @@
     e.sleep = newSleep.getTime();
     e.wake = newWake.getTime();
     saveState();
-    renderSleep();
+    renderTabs();
     showToast('Sleep times updated');
-  });
+  }
 
   function weeklyMinutes(entries){
     var cutoff = Date.now() - 7*86400000;
@@ -1642,163 +1990,100 @@
   function findCat(catId){ return state.categories.find(function(c){ return c.id===catId; }); }
   function findType(cat, typeId){ return cat.types.find(function(t){ return t.id===typeId; }); }
 
-  /* ---------------- rendering ---------------- */
-  function renderAll(){
-    renderPokemon();
-    renderDailyTodos();
-    renderSleep();
-    renderCategories();
-    renderLog();
+  function escapeHtml(str){
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+  function escapeAttr(str){
+    return escapeHtml(str).replace(/"/g, '&quot;');
   }
 
-  function renderPokemon(){
+  /* =========================================================================
+     WIDGET HTML GENERATORS
+     Each returns a full HTML string for that widget. The whole tab scroller
+     is rebuilt from scratch on every state change, so these are pure
+     read-only renders with no id-based DOM juggling; interactivity is wired
+     via a single set of delegated listeners on #tabsScroller.
+     ========================================================================= */
+
+  function companionHtml(){
     var info = getPokemonInfo();
-    var sprite = document.getElementById('tamaSprite');
-    sprite.src = spriteUrl(info.stage.id);
-    sprite.alt = info.stage.name;
-    document.getElementById('tamaName').textContent = info.stage.name;
-    document.getElementById('tamaLvlBadge').textContent = 'Lv ' + info.level;
-
-    var pips = document.querySelectorAll('#tamaPips span');
-    pips.forEach(function(p, i){ p.classList.toggle('filled', i <= info.stageIdx); });
-
     var span = info.nextBase - info.curBase;
     var into = info.xp - info.curBase;
     var pct = span > 0 ? Math.min(100, Math.round((into / span) * 100)) : 100;
-    document.getElementById('tamaXpFill').style.width = pct + '%';
-    document.getElementById('tamaXpLabel').textContent = into + ' / ' + span + ' XP to next level';
-
     var hpPct = info.maxHealth > 0 ? Math.round((info.health / info.maxHealth) * 100) : 0;
-    var hpFill = document.getElementById('tamaHpFill');
-    hpFill.style.width = hpPct + '%';
-    hpFill.classList.toggle('low', hpPct <= 40 && hpPct > 15);
-    hpFill.classList.toggle('critical', hpPct <= 15);
-    document.getElementById('tamaHpLabel').textContent = info.health + ' / ' + info.maxHealth + ' HP';
+    var hpClass = hpPct <= 15 ? ' critical' : (hpPct <= 40 ? ' low' : '');
+    var caption = localStorage.getItem('tamaCaption') || 'This week\'s companion';
+    var pipsHtml = '';
+    for(var i=0; i<3; i++){ pipsHtml += '<span'+(i<=info.stageIdx?' class="filled"':'')+'></span>'; }
 
-    document.getElementById('tamaCaption').textContent = localStorage.getItem('tamaCaption') || 'This week\'s companion';
-    if(pokemonJustRolled){
-      pokemonJustRolled = false;
-      showToast('A new companion appeared: ' + info.stage.name + '!');
-    }
+    return '<div class="tama-card">' +
+      '<div class="tama-screen">' +
+        '<div class="tama-lvl-badge">Lv ' + info.level + '</div>' +
+        '<img class="tama-sprite" src="' + spriteUrl(info.stage.id) + '" alt="' + escapeAttr(info.stage.name) + '">' +
+      '</div>' +
+      '<div class="tama-info">' +
+        '<div class="tama-name-row"><span class="tama-name">' + escapeHtml(info.stage.name) + '</span><div class="tama-pips">' + pipsHtml + '</div></div>' +
+        '<div class="hp-row"><div class="hp-track"><div class="hp-fill' + hpClass + '" style="width:' + hpPct + '%"></div></div><span class="hp-label">' + info.health + ' / ' + info.maxHealth + ' HP</span></div>' +
+        '<div class="tama-caption">' + escapeHtml(caption) + '</div>' +
+        '<div class="xp-track"><div class="xp-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="xp-label">' + into + ' / ' + span + ' XP to next level</div>' +
+      '</div>' +
+    '</div>';
   }
 
-  function renderCategories(){
-    var container = document.getElementById('categoryList');
-    container.innerHTML = '';
-
-    if(!state.categories.length){
-      container.innerHTML = '<div class="empty-state">No categories yet.<br>Tap ⚙ to add one.</div>';
-      return;
-    }
-
-    state.categories.forEach(function(cat){
-      var catEntries = entriesFor(cat.id, null);
-      var sInfo = streakInfo(catEntries);
-      var weekMin = weeklyMinutes(catEntries);
-
-      var card = document.createElement('div');
-      card.className = 'category-card';
-      card.style.setProperty('--cat-color', cat.color || '#4fa8a0');
-
-      var streakHtml;
-      if(sInfo.type === 'active'){
-        streakHtml = '<span class="streak-stamp active">'+(cat.isBad?'⚠':'🔥')+' '+sInfo.streak+' day'+(sInfo.streak===1?'':'s')+'</span>';
-      } else if(sInfo.type === 'stale'){
-        streakHtml = '<span class="streak-stamp stale">'+sInfo.daysAgo+'d since last</span>';
-      } else {
-        streakHtml = '<span class="streak-stamp none">No logs yet</span>';
-      }
-
-      // Habits with a set frequency that are overdue surface here automatically,
-      // no need to open a row to find them. Bad habits never get "due" reminders.
-      var dueTypes = cat.isBad ? [] : cat.types.filter(function(t){ return isTypeDue(cat.id, t); });
-      var dueHtml = '';
-      if(dueTypes.length){
-        dueHtml = '<div class="due-section">' + dueTypes.map(function(t){
-          var days = daysSinceLastLog(entriesFor(cat.id, t.id));
-          var sub = (days === Infinity ? 'Never logged' : days + 'd since last') + ' · ' + fmtFreq(t.freq);
-          var tier = getMultiplierTier(t);
-          var controlsHtml = t.isChecklist
-            ? '<button class="log-btn due-check-btn" style="width:100%;">'+(isDoneToday(cat.id, t.id) ? '✓ Done today' : 'Mark done')+'</button>'
-            : '<div class="log-controls">' +
-                '<button class="step-btn" data-step="-5">−5</button>' +
-                '<input type="number" class="minutes-input" value="15" min="5" step="5">' +
-                '<button class="step-btn" data-step="5">+5</button>' +
-                '<button class="step-btn timer-start-btn" title="Start a timer instead">⏱</button>' +
-                '<button class="log-btn">Log</button>' +
-              '</div>';
-          return '<div class="due-item" data-cat="'+cat.id+'" data-type="'+t.id+'">' +
-            '<div class="due-item-head"><span class="due-badge">⏰ Due</span><span class="due-name"><img class="candy-icon" src="'+tier.sprite+'" alt="'+tier.label+' candy"> '+escapeHtml(t.name)+'</span></div>' +
-            '<div class="due-sub">'+sub+'</div>' +
-            controlsHtml +
-          '</div>';
-        }).join('') + '</div>';
-      }
-
-      var listHtml = '<div class="type-list" data-cat="'+cat.id+'">' +
-        cat.types.map(function(t){ return typeRowHtml(cat, t); }).join('')
-        //  +'<button class="add-type-row" data-add-type="'+cat.id+'">+ Add activity</button>' +
+  function dailyTodosHtml(){
+    var items = ensureDailyTodos();
+    var dateStr = new Date().toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    var rows = items.map(function(item, idx){
+      return '<div class="daily-todo-row' + (item.done?' done':'') + '">' +
+        '<button class="daily-todo-check' + (item.done?' done':'') + '" data-daily-check="' + idx + '">' + (item.done?'✓':'') + '</button>' +
+        '<input type="text" class="daily-todo-input" data-daily-idx="' + idx + '" placeholder="Add a goal for today…" maxlength="60" value="' + escapeAttr(item.text) + '">' +
       '</div>';
+    }).join('');
+    return '<div class="daily-todo-card">' +
+      '<div class="daily-todo-header"><span class="daily-todo-title">🎯 Today\'s 3 things</span><span class="daily-todo-date">' + dateStr + '</span></div>' +
+      '<div class="daily-todo-list">' + rows + '</div>' +
+    '</div>';
+  }
 
-      card.innerHTML =
-        '<div class="cat-header">' +
-          '<span class="cat-icon">'+(cat.icon||'📌')+'</span>' +
-          '<span class="cat-name">'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</span>' +
-          '<div class="cat-meta">' + streakHtml + '<span class="week-total">'+fmtDuration(weekMin)+' this wk</span></div>' +
-        '</div>' +
-        dueHtml +
-        listHtml;
+  function sleepHtml(){
+    var latest = getLatestSleepEntry();
+    var body;
+    if(!latest){
+      body = '<div class="sleep-empty">No sleep detected yet — open the app once in the evening and again the next morning, and it will show up here.</div>';
+    } else {
+      var e = latest.entry;
+      var durMin = Math.max(0, Math.round((e.wake - e.sleep) / 60000));
+      body = '<div class="sleep-times">' +
+        '<div class="sleep-stat"><span class="sleep-stat-label">Asleep</span><span class="sleep-stat-value">' + fmtClock(e.sleep) + '</span></div>' +
+        '<div class="sleep-stat"><span class="sleep-stat-label">Awake</span><span class="sleep-stat-value">' + fmtClock(e.wake) + '</span></div>' +
+        '<div class="sleep-stat"><span class="sleep-stat-label">Total</span><span class="sleep-stat-value">' + fmtDuration(durMin) + '</span></div>' +
+      '</div>';
+    }
+    return '<div class="sleep-card">' +
+      '<div class="sleep-header"><span class="sleep-title">😴 Sleep</span><button class="chip-freq-btn" data-sleep-edit title="Adjust sleep/wake times">✎ Edit</button></div>' +
+      '<div class="sleep-body">' + body + '</div>' +
+    '</div>';
+  }
 
-      container.appendChild(card);
-
-      // Wire up the auto-surfaced due items.
-      card.querySelectorAll('.due-item').forEach(function(dueEl){
-        var tId = dueEl.getAttribute('data-type');
-        var mInput = dueEl.querySelector('.minutes-input');
-        dueEl.querySelectorAll('.step-btn[data-step]').forEach(function(btn){
-          btn.addEventListener('click', function(){
-            var delta = parseInt(btn.getAttribute('data-step'), 10);
-            var val = parseInt(mInput.value, 10) || 0;
-            mInput.value = Math.max(5, val + delta);
-          });
-        });
-        var timerBtn = dueEl.querySelector('.timer-start-btn');
-        if(timerBtn){ timerBtn.addEventListener('click', function(){ startTimerFor(cat.id, tId); }); }
-        var logBtn = dueEl.querySelector('.log-btn:not(.due-check-btn)');
-        if(logBtn){
-          logBtn.addEventListener('click', function(){
-            var mins = parseInt(mInput.value, 10);
-            if(!mins || mins <= 0) return;
-            commitLog(cat.id, tId, mins);
-          });
-        }
-        var checkBtn = dueEl.querySelector('.due-check-btn');
-        if(checkBtn && !isDoneToday(cat.id, tId)){
-          checkBtn.addEventListener('click', function(){ commitLog(cat.id, tId, CHECKLIST_MINUTES); });
-        }
-      });
-
-      // Wire up the compact activity rows: tap the row to open full details, tap the
-      // checkbox (checklist items only) to mark done without opening anything.
-      card.querySelectorAll('[data-open]').forEach(function(el){
-        el.addEventListener('click', function(){
-          var parts = el.getAttribute('data-open').split('|');
-          openDetailPopup(parts[0], parts[1]);
-        });
-      });
-      card.querySelectorAll('[data-check]').forEach(function(btn){
-        btn.addEventListener('click', function(e){
-          e.stopPropagation();
-          var parts = btn.getAttribute('data-check').split('|');
-          if(isDoneToday(parts[0], parts[1])) return;
-          commitLog(parts[0], parts[1], CHECKLIST_MINUTES);
-        });
-      });
-      var addTypeBtn = card.querySelector('[data-add-type]');
-      if(addTypeBtn){
-        addTypeBtn.addEventListener('click', function(){ showAddTypeForm(cat.id); });
-      }
-    });
+  function historyHtml(){
+    var sorted = state.logs.slice().sort(function(a,b){ return b.ts - a.ts; }).slice(0, 10);
+    if(!sorted.length){
+      return '<div class="recent-log"><h2>Recent activity</h2><div class="empty-state">No activity logged yet.</div></div>';
+    }
+    var itemsHtml = sorted.map(function(entry){
+      var cat = findCat(entry.catId);
+      if(!cat) return '';
+      var type = findType(cat, entry.typeId);
+      return '<li class="log-item">' +
+        '<span class="li-icon">' + (cat.icon||'📌') + '</span>' +
+        '<span class="li-main"><div class="li-title">' + escapeHtml(cat.name) + ' — ' + escapeHtml(type ? type.name : 'Deleted activity') + '</div><div class="li-sub">' + relativeTime(entry.ts) + '</div></span>' +
+        '<span class="li-dur">' + fmtDuration(entry.minutes) + '</span>' +
+      '</li>';
+    }).join('');
+    return '<div class="recent-log"><h2>Recent activity</h2><ul class="log-list">' + itemsHtml + '</ul></div>';
   }
 
   // Compact vertical-list row for one activity: name, candy tier, frequency, streak/since,
@@ -1834,40 +2119,261 @@
     '</div>';
   }
 
-  function showAddTypeForm(catId){
-    var list = document.querySelector('.type-list[data-cat="'+catId+'"]');
-    var addBtn = list.querySelector('.add-type-row');
-    var wrap = document.createElement('div');
-    wrap.className = 'add-type-form';
-    wrap.innerHTML =
-      '<input type="text" placeholder="e.g. Ukulele or Wash sheets 2w" maxlength="30" id="newTypeInput_'+catId+'">' +
-      '<button id="newTypeConfirm_'+catId+'">Add</button>';
-    addBtn.replaceWith(wrap);
-    var input = document.getElementById('newTypeInput_'+catId);
-    input.focus();
-    function confirmAdd(){
-      var raw = input.value.trim();
-      if(!raw) return;
-      var parsed = parseFrequencyFromName(raw);
-      if(!parsed.name) return;
-      var cat = findCat(catId);
-      var newType = { id: uid('t'), name: parsed.name };
-      if(parsed.freq) newType.freq = parsed.freq;
-      cat.types.push(newType);
-      saveState();
-      renderCategories();
-      if(parsed.freq){ showToast('Repeat set: ' + fmtFreq(parsed.freq)); }
+  function categoryCardHtml(cat){
+    var catEntries = entriesFor(cat.id, null);
+    var sInfo = streakInfo(catEntries);
+    var weekMin = weeklyMinutes(catEntries);
+
+    var streakHtml;
+    if(sInfo.type === 'active'){
+      streakHtml = '<span class="streak-stamp active">'+(cat.isBad?'⚠':'🔥')+' '+sInfo.streak+' day'+(sInfo.streak===1?'':'s')+'</span>';
+    } else if(sInfo.type === 'stale'){
+      streakHtml = '<span class="streak-stamp stale">'+sInfo.daysAgo+'d since last</span>';
+    } else {
+      streakHtml = '<span class="streak-stamp none">No logs yet</span>';
     }
-    document.getElementById('newTypeConfirm_'+catId).addEventListener('click', confirmAdd);
-    input.addEventListener('keydown', function(e){ if(e.key==='Enter') confirmAdd(); });
+
+    var dueTypes = cat.isBad ? [] : cat.types.filter(function(t){ return isTypeDue(cat.id, t); });
+    var dueHtml = '';
+    if(dueTypes.length){
+      dueHtml = '<div class="due-section">' + dueTypes.map(function(t){
+        var days = daysSinceLastLog(entriesFor(cat.id, t.id));
+        var sub = (days === Infinity ? 'Never logged' : days + 'd since last') + ' · ' + fmtFreq(t.freq);
+        var tier = getMultiplierTier(t);
+        var controlsHtml = t.isChecklist
+          ? '<button class="log-btn due-check-btn">'+(isDoneToday(cat.id, t.id) ? '✓ Done today' : 'Mark done')+'</button>'
+          : '<div class="log-controls">' +
+              '<button class="step-btn" data-step="-5">−5</button>' +
+              '<input type="number" class="minutes-input" value="15" min="5" step="5">' +
+              '<button class="step-btn" data-step="5">+5</button>' +
+              '<button class="step-btn timer-start-btn" title="Start a timer instead">⏱</button>' +
+              '<button class="log-btn">Log</button>' +
+            '</div>';
+        return '<div class="due-item" data-cat="'+cat.id+'" data-type="'+t.id+'">' +
+          '<div class="due-item-head"><span class="due-badge">⏰ Due</span><span class="due-name"><img class="candy-icon" src="'+tier.sprite+'" alt="'+tier.label+' candy"> '+escapeHtml(t.name)+'</span></div>' +
+          '<div class="due-sub">'+sub+'</div>' +
+          controlsHtml +
+        '</div>';
+      }).join('') + '</div>';
+    }
+
+    var listHtml = '<div class="type-list" data-cat="'+cat.id+'">' + cat.types.map(function(t){ return typeRowHtml(cat, t); }).join('') + '</div>';
+
+    return '<div class="category-card" style="--cat-color:'+(cat.color||'#4fa8a0')+'">' +
+      '<div class="cat-header">' +
+        '<span class="cat-icon">'+(cat.icon||'📌')+'</span>' +
+        '<span class="cat-name">'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</span>' +
+        '<div class="cat-meta">' + streakHtml + '<span class="week-total">'+fmtDuration(weekMin)+' this wk</span></div>' +
+      '</div>' +
+      dueHtml + listHtml +
+    '</div>';
   }
 
-  // Big popup opened by tapping a compact activity row: full stats, 14-day heatmap, and
-  // either the minute stepper + log/timer controls, or a single "Mark done" button for
-  // checklist items.
+  function widgetHtml(key){
+    if(key === 'companion') return companionHtml();
+    if(key === 'dailyTodos') return dailyTodosHtml();
+    if(key === 'sleep') return sleepHtml();
+    if(key === 'journal') return journalHtml();
+    if(key === 'calendar') return calendarHtml();
+    if(key === 'history') return historyHtml();
+    var cat = findCat(key);
+    return cat ? categoryCardHtml(cat) : '';
+  }
+
+  function tabPageHtml(tab){
+    var body = tab.widgets.map(widgetHtml).join('');
+    if(!tab.widgets.length){
+      body = '<div class="empty-state">No widgets on this tab yet.<br>Tap ⚙ to add some.</div>';
+    }
+    return '<div class="tab-page" data-tab-id="'+tab.id+'">' + body + '</div>';
+  }
+
+  /* =========================================================================
+     RENDER — TABS
+     ========================================================================= */
+
+  function renderTabs(){
+    ensureTabs();
+    var scroller = document.getElementById('tabsScroller');
+    scroller.innerHTML = state.tabs.map(tabPageHtml).join('');
+    renderTabsNav();
+    scroller.scrollLeft = currentTabIndex * scroller.clientWidth;
+
+    if(pokemonJustRolled){
+      pokemonJustRolled = false;
+      var info = getPokemonInfo();
+      showToast('A new companion appeared: ' + info.stage.name + '!');
+    }
+  }
+
+  function renderTabsNav(){
+    var nav = document.getElementById('tabsNav');
+    if(currentTabIndex >= state.tabs.length) currentTabIndex = Math.max(0, state.tabs.length - 1);
+    nav.innerHTML = state.tabs.map(function(tab, idx){
+      return '<button class="tab-pill'+(idx===currentTabIndex?' active':'')+'" data-nav-idx="'+idx+'">'+escapeHtml(tab.name)+'</button>';
+    }).join('');
+    nav.querySelectorAll('[data-nav-idx]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        goToTab(parseInt(btn.getAttribute('data-nav-idx'), 10));
+      });
+    });
+  }
+
+  function goToTab(idx){
+    currentTabIndex = idx;
+    var scroller = document.getElementById('tabsScroller');
+    scroller.scrollTo({ left: idx * scroller.clientWidth, behavior: 'smooth' });
+    renderTabsNav();
+  }
+
+  /* =========================================================================
+     DELEGATED INTERACTIONS for everything inside #tabsScroller
+     ========================================================================= */
+
+  function wireTabsScroller(){
+    var scroller = document.getElementById('tabsScroller');
+
+    scroller.addEventListener('click', function(e){
+      var t = e.target;
+
+      var dailyCheck = t.closest('[data-daily-check]');
+      if(dailyCheck){
+        var idx = parseInt(dailyCheck.getAttribute('data-daily-check'), 10);
+        var arr = ensureDailyTodos();
+        arr[idx].done = !arr[idx].done;
+        saveState();
+        renderTabs();
+        return;
+      }
+
+      if(t.closest('[data-sleep-edit]')){
+        openSleepEditor();
+        return;
+      }
+
+      var calNav = t.closest('[data-cal-nav]');
+      if(calNav){
+        var dir = parseInt(calNav.getAttribute('data-cal-nav'), 10);
+        var nm = calendarViewMonth.month + dir;
+        var ny = calendarViewMonth.year;
+        if(nm < 0){ nm = 11; ny--; } else if(nm > 11){ nm = 0; ny++; }
+        calendarViewMonth = { year: ny, month: nm };
+        calendarSelectedDay = null;
+        renderTabs();
+        return;
+      }
+      if(t.closest('[data-cal-today]')){
+        var td = new Date();
+        calendarViewMonth = { year: td.getFullYear(), month: td.getMonth() };
+        calendarSelectedDay = localDateStr(Date.now());
+        renderTabs();
+        return;
+      }
+      var calDayEl = t.closest('[data-cal-day]');
+      if(calDayEl){
+        var dsel = calDayEl.getAttribute('data-cal-day');
+        calendarSelectedDay = (calendarSelectedDay === dsel) ? null : dsel;
+        renderTabs();
+        return;
+      }
+
+      var dueItem = t.closest('.due-item');
+      if(dueItem){
+        var catId = dueItem.getAttribute('data-cat');
+        var typeId = dueItem.getAttribute('data-type');
+
+        var stepBtn = t.closest('.step-btn[data-step]');
+        if(stepBtn){
+          var delta = parseInt(stepBtn.getAttribute('data-step'), 10);
+          var input = dueItem.querySelector('.minutes-input');
+          var val = parseInt(input.value, 10) || 0;
+          input.value = Math.max(5, val + delta);
+          return;
+        }
+        if(t.closest('.timer-start-btn')){
+          startTimerFor(catId, typeId);
+          return;
+        }
+        if(t.closest('.due-check-btn')){
+          if(!isDoneToday(catId, typeId)) commitLog(catId, typeId, CHECKLIST_MINUTES);
+          return;
+        }
+        if(t.closest('.log-btn')){
+          var mInput = dueItem.querySelector('.minutes-input');
+          var mins = parseInt(mInput.value, 10);
+          if(mins > 0) commitLog(catId, typeId, mins);
+          return;
+        }
+      }
+
+      var checkBtn = t.closest('[data-check]');
+      if(checkBtn){
+        var cparts = checkBtn.getAttribute('data-check').split('|');
+        if(!isDoneToday(cparts[0], cparts[1])) commitLog(cparts[0], cparts[1], CHECKLIST_MINUTES);
+        return;
+      }
+
+      var openEl = t.closest('[data-open]');
+      if(openEl){
+        var oparts = openEl.getAttribute('data-open').split('|');
+        openDetailPopup(oparts[0], oparts[1]);
+        return;
+      }
+
+      if(t.closest('[data-journal-history]')){
+        openJournalHistory();
+        return;
+      }
+    });
+
+    scroller.addEventListener('input', function(e){
+      var input = e.target;
+      if(input.matches('[data-journal-input]')){
+        journalHandleInput(input);
+      }
+    });
+
+    scroller.addEventListener('change', function(e){
+      var input = e.target;
+      if(input.matches('.daily-todo-input')){
+        var idx = parseInt(input.getAttribute('data-daily-idx'), 10);
+        var arr = ensureDailyTodos();
+        arr[idx].text = input.value;
+        saveState();
+        return;
+      }
+      if(input.matches('[data-journal-input]')){
+        // Full refresh only on blur — mid-typing renders would reset the cursor/focus.
+        clearTimeout(journalSaveDebounce);
+        saveState();
+        renderTabs();
+      }
+    });
+
+    scroller.addEventListener('scroll', function(){
+      clearTimeout(scroller._scrollDebounce);
+      scroller._scrollDebounce = setTimeout(function(){
+        var idx = Math.round(scroller.scrollLeft / Math.max(1, scroller.clientWidth));
+        if(idx !== currentTabIndex && idx >= 0 && idx < state.tabs.length){
+          currentTabIndex = idx;
+          renderTabsNav();
+        }
+      }, 80);
+    });
+  }
+
+  window.addEventListener('resize', function(){
+    var scroller = document.getElementById('tabsScroller');
+    if(scroller) scroller.scrollLeft = currentTabIndex * scroller.clientWidth;
+  });
+
+  /* =========================================================================
+     DETAIL POPUP
+     ========================================================================= */
+
   function renderDetailPopup(catId, typeId){
     var cat = findCat(catId);
-    var type = findType(cat, typeId);
+    var type = cat && findType(cat, typeId);
     if(!cat || !type){ closeModals(); return; }
 
     var entries = entriesFor(catId, typeId);
@@ -1958,40 +2464,10 @@
     document.getElementById('detailModal').classList.remove('hidden');
   }
 
-  function renderLog(){
-    var list = document.getElementById('logList');
-    list.innerHTML = '';
-    var sorted = state.logs.slice().sort(function(a,b){ return b.ts - a.ts; }).slice(0, 10);
+  /* =========================================================================
+     MANAGE MODAL
+     ========================================================================= */
 
-    if(!sorted.length){
-      list.innerHTML = '<div class="empty-state">No activity logged yet.</div>';
-      return;
-    }
-
-    sorted.forEach(function(entry){
-      var cat = findCat(entry.catId);
-      if(!cat) return;
-      var type = findType(cat, entry.typeId);
-      var li = document.createElement('li');
-      li.className = 'log-item';
-      li.innerHTML =
-        '<span class="li-icon">'+(cat.icon||'📌')+'</span>' +
-        '<span class="li-main">' +
-          '<div class="li-title">'+escapeHtml(cat.name)+' — '+escapeHtml(type ? type.name : 'Deleted activity')+'</div>' +
-          '<div class="li-sub">'+relativeTime(entry.ts)+'</div>' +
-        '</span>' +
-        '<span class="li-dur">'+fmtDuration(entry.minutes)+'</span>';
-      list.appendChild(li);
-    });
-  }
-
-  function escapeHtml(str){
-    var d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
-
-  /* ---------------- manage modal ---------------- */
   var manageModal = document.getElementById('manageModal');
   var manageContent = document.getElementById('manageContent');
   var selectedColor = CAT_COLORS[0];
@@ -2004,9 +2480,371 @@
     document.querySelectorAll('.modal-overlay').forEach(function(m){ m.classList.add('hidden'); });
   }
 
-  /* ---------------- Timer popup ---------------- */
-  // Persisted to state.activeTimer so a page refresh (or reopening the app later) resumes
-  // the running timer instead of losing it.
+  function renderManageContent(){
+    var html = '';
+
+    // ---- Tabs & layout ----
+    html += '<div class="manage-cat-block">' +
+      '<div class="manage-cat-head"><strong>Tabs &amp; layout</strong><button class="mini-danger" id="addTabBtn" style="border-color:var(--accent2);color:var(--accent2);">+ Add tab</button></div>';
+    state.tabs.forEach(function(tab, tIdx){
+      html += '<div class="tab-manage-block">' +
+        '<div class="tab-manage-head">' +
+          '<input type="text" class="tab-name-input" data-tab-idx="'+tIdx+'" value="'+escapeAttr(tab.name)+'" maxlength="20">' +
+          (state.tabs.length > 1 ? '<button class="mini-danger" data-del-tab="'+tIdx+'">Delete</button>' : '') +
+        '</div>' +
+        '<div class="type-chip-row">' +
+          (tab.widgets.length ? tab.widgets.map(function(w, wIdx){
+            return '<span class="type-chip">'+widgetLabel(w)+
+              '<button data-tab-widget-move="'+tIdx+'|'+wIdx+'|-1" style="color:var(--accent2)" title="Move up">↑</button>'+
+              '<button data-tab-widget-move="'+tIdx+'|'+wIdx+'|1" style="color:var(--accent2)" title="Move down">↓</button>'+
+              '<button data-tab-widget-remove="'+tIdx+'|'+wIdx+'" title="Remove from this tab">&times;</button></span>';
+          }).join('') : '<span style="font-size:12px;color:var(--text-faint)">No widgets on this tab yet</span>') +
+        '</div>' +
+        '<select class="type-select" data-tab-add-widget="'+tIdx+'" style="margin-top:0;">' +
+          '<option value="">+ Add widget to this tab…</option>' + availableWidgetOptions(tab) +
+        '</select>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    // ---- Categories ----
+    if(!state.categories.length){
+      html += '<div class="empty-state">No categories yet — add your first one below.</div>';
+    }
+    state.categories.forEach(function(cat){
+      html += '<div class="manage-cat-block">' +
+        '<div class="manage-cat-head">' +
+          '<span style="font-size:18px">'+(cat.icon||'📌')+'</span>' +
+          '<strong>'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</strong>' +
+          '<button class="mini-danger" data-toggle-bad="'+cat.id+'" style="border-color:var(--accent2);color:var(--accent2);">'+(cat.isBad?'Mark good':'Mark bad')+'</button>' +
+          '<button class="mini-danger" data-del-cat="'+cat.id+'">Delete category</button>' +
+        '</div>' +
+        '<div class="type-chip-row">' +
+          cat.types.map(function(t){
+            var tier = getMultiplierTier(t);
+            return '<span class="type-chip">'+escapeHtml(t.name)+
+              (t.freq ? '<span class="freq-badge">'+fmtFreq(t.freq)+'</span>' : '') +
+              '<button class="chip-mult-btn" data-cycle-mult="'+cat.id+'|'+t.id+'" title="Cycle XP/HP multiplier"><img class="chip-candy" src="'+tier.sprite+'" alt="'+tier.label+' candy"> '+tier.mult+'x</button>' +
+              '<button class="chip-freq-btn" data-freq-edit="'+cat.id+'|'+t.id+'" title="Set repeat frequency">⏱</button>' +
+              '<button class="chip-freq-btn" data-toggle-checklist="'+cat.id+'|'+t.id+'" title="Toggle TODO/checkbox mode">'+(t.isChecklist?'☑':'📋')+'</button>' +
+              '<button data-del-type="'+cat.id+'|'+t.id+'">&times;</button></span>';
+          }).join('') +
+          (cat.types.length===0 ? '<span style="font-size:12px;color:var(--text-faint)">No activities yet</span>' : '') +
+        '</div>' +
+        '<div class="inline-add">' +
+          '<input type="text" placeholder="New activity name (e.g. Wash sheets 2w)" maxlength="30" id="quickType_'+cat.id+'">' +
+          '<button data-quick-add="'+cat.id+'">Add</button>' +
+        '</div>' +
+      '</div>';
+    });
+
+    html += '<div class="new-cat-form">' +
+      '<label>New category name</label>' +
+      '<input type="text" id="newCatName" placeholder="e.g. Reading" maxlength="24">' +
+      '<label>Icon (emoji)</label>' +
+      '<input type="text" id="newCatIcon" placeholder="📚" maxlength="4">' +
+      '<label>Color</label>' +
+      '<div class="swatches" id="colorSwatches"></div>' +
+      '<label class="checkbox-row"><input type="checkbox" id="newCatBad"> This is a bad habit (reduces companion HP instead of XP)</label>' +
+      '<button class="primary-btn" id="addCatBtn">Add category</button>' +
+    '</div>';
+
+    html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
+      '<button class="primary-btn" id="rerollBtn">Reroll companion</button>' +
+    '</div>';
+
+    html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
+      '<label>Select companion</label>' +
+      '<select id="selectCompanion">' +
+        STARTER_LINES.map(function(line, idx){
+          return '<option value="'+idx+'">'+line.stages[0].name+'</option>';
+        }).join('') +
+      '</select>' +
+    '</div>';
+
+    html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
+      '<button class="primary-btn" id="clearLogBtn">Clear all logs</button>' +
+    '</div>';
+    manageContent.innerHTML = html;
+
+    // ---- Tabs wiring ----
+    document.getElementById('addTabBtn').addEventListener('click', function(){
+      state.tabs.push({ id: uid('tab'), name: 'Tab ' + (state.tabs.length + 1), widgets: ['companion'] });
+      saveState();
+      renderManageContent();
+      renderTabs();
+    });
+
+    manageContent.querySelectorAll('.tab-name-input').forEach(function(inp){
+      inp.addEventListener('change', function(){
+        var idx = parseInt(inp.getAttribute('data-tab-idx'), 10);
+        state.tabs[idx].name = inp.value.trim() || ('Tab ' + (idx + 1));
+        saveState();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-del-tab]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var idx = parseInt(btn.getAttribute('data-del-tab'), 10);
+        if(!confirm('Delete tab "' + state.tabs[idx].name + '"? Widgets themselves are not deleted, just this tab.')) return;
+        state.tabs.splice(idx, 1);
+        if(currentTabIndex >= state.tabs.length) currentTabIndex = Math.max(0, state.tabs.length - 1);
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-tab-widget-move]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-tab-widget-move').split('|');
+        var tIdx = parseInt(parts[0], 10), wIdx = parseInt(parts[1], 10), dir = parseInt(parts[2], 10);
+        var arr = state.tabs[tIdx].widgets;
+        var newIdx = wIdx + dir;
+        if(newIdx < 0 || newIdx >= arr.length) return;
+        var tmp = arr[wIdx]; arr[wIdx] = arr[newIdx]; arr[newIdx] = tmp;
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-tab-widget-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-tab-widget-remove').split('|');
+        var tIdx = parseInt(parts[0], 10), wIdx = parseInt(parts[1], 10);
+        state.tabs[tIdx].widgets.splice(wIdx, 1);
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-tab-add-widget]').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        var tIdx = parseInt(sel.getAttribute('data-tab-add-widget'), 10);
+        if(sel.value){
+          state.tabs[tIdx].widgets.push(sel.value);
+          saveState();
+          renderManageContent();
+          renderTabs();
+        }
+      });
+    });
+
+    // ---- Color swatches ----
+    var swatchWrap = document.getElementById('colorSwatches');
+    CAT_COLORS.forEach(function(c){
+      var sw = document.createElement('div');
+      sw.className = 'swatch' + (c === selectedColor ? ' selected' : '');
+      sw.style.background = c;
+      sw.addEventListener('click', function(){
+        selectedColor = c;
+        swatchWrap.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('selected'); });
+        sw.classList.add('selected');
+      });
+      swatchWrap.appendChild(sw);
+    });
+
+    // ---- Reroll / select / clear-log ----
+    var reroll = document.getElementById('rerollBtn');
+    if(reroll){
+      reroll.addEventListener('click', function(){
+        var wk = weekIndex(Date.now());
+        var prevIdx = state.pokemon ? state.pokemon.lineIndex : -1;
+        var idx = Math.floor(Math.random() * STARTER_LINES.length);
+        if(STARTER_LINES.length > 1){
+          while(idx === prevIdx){ idx = Math.floor(Math.random() * STARTER_LINES.length); }
+        }
+        state.pokemon = { weekKey: wk, lineIndex: idx, xp: 0 };
+        pokemonJustRolled = true;
+        saveState();
+        renderTabs();
+        showToast('Rerolled companion!');
+      });
+    }
+
+    var selectComp = document.getElementById('selectCompanion');
+    if(selectComp){
+      selectComp.value = state.pokemon ? state.pokemon.lineIndex : 0;
+      selectComp.addEventListener('change', function(){
+        var idx = parseInt(selectComp.value, 10);
+        var wk = weekIndex(Date.now());
+        state.pokemon = { weekKey: wk, lineIndex: idx, xp: 0 };
+        pokemonJustRolled = true;
+        saveState();
+        renderTabs();
+        showToast('Selected companion: ' + STARTER_LINES[idx].stages[0].name);
+      });
+    }
+
+    var clearLog = document.getElementById('clearLogBtn');
+    if(clearLog){
+      clearLog.addEventListener('click', function(){
+        if(!confirm('Are you sure you want to clear all logged activity? This cannot be undone.')) return;
+        state.logs = [];
+        saveState();
+        renderTabs();
+        showToast('All logs cleared.');
+      });
+    }
+
+    // ---- Category toggles ----
+    manageContent.querySelectorAll('[data-toggle-bad]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var catId = btn.getAttribute('data-toggle-bad');
+        var cat = findCat(catId);
+        cat.isBad = !cat.isBad;
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-freq-edit]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-freq-edit').split('|');
+        var catId = parts[0], typeId = parts[1];
+        var cat = findCat(catId);
+        var type = findType(cat, typeId);
+        var current = type.freq ? (type.freq.n + type.freq.unit) : '';
+        var val = prompt('Repeat frequency for "'+type.name+'" (e.g. "2w" for every 2 weeks, "10d" for every 10 days). Leave blank to remove.', current);
+        if(val === null) return;
+        val = val.trim();
+        if(!val){
+          delete type.freq;
+        } else {
+          var freq = parseFrequencyString(val);
+          if(!freq){ alert('Could not understand that. Try a format like "2w" or "10d".'); return; }
+          type.freq = freq;
+        }
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-cycle-mult]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-cycle-mult').split('|');
+        var cat = findCat(parts[0]);
+        var type = findType(cat, parts[1]);
+        cycleMultiplierTier(type);
+        saveState();
+        renderManageContent();
+        renderTabs();
+        var tier = getMultiplierTier(type);
+        showToast(type.name + ' now worth ' + tier.mult + 'x (' + tier.label + ' candy)');
+      });
+    });
+
+    manageContent.querySelectorAll('[data-toggle-checklist]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-toggle-checklist').split('|');
+        var cat = findCat(parts[0]);
+        var type = findType(cat, parts[1]);
+        type.isChecklist = !type.isChecklist;
+        saveState();
+        renderManageContent();
+        renderTabs();
+        showToast(type.name + ' is now a ' + (type.isChecklist ? 'TODO checkbox' : 'timed activity'));
+      });
+    });
+
+    manageContent.querySelectorAll('[data-del-cat]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var catId = btn.getAttribute('data-del-cat');
+        var cat = findCat(catId);
+        var count = entriesFor(catId, null).length;
+        var msg = 'Delete "'+cat.name+'" and its activities?' + (count ? ' This will also remove '+count+' logged entr'+(count===1?'y':'ies')+'.' : '');
+        if(!confirm(msg)) return;
+        state.categories = state.categories.filter(function(c){ return c.id!==catId; });
+        state.logs = state.logs.filter(function(l){ return l.catId!==catId; });
+        state.tabs.forEach(function(tab){ tab.widgets = tab.widgets.filter(function(w){ return w !== catId; }); });
+        delete openTypeByCat[catId];
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-del-type]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.getAttribute('data-del-type').split('|');
+        var catId = parts[0], typeId = parts[1];
+        var cat = findCat(catId);
+        var type = findType(cat, typeId);
+        var count = entriesFor(catId, typeId).length;
+        var msg = 'Delete "'+type.name+'"?' + (count ? ' This will also remove '+count+' logged entr'+(count===1?'y':'ies')+'.' : '');
+        if(!confirm(msg)) return;
+        cat.types = cat.types.filter(function(t){ return t.id!==typeId; });
+        state.logs = state.logs.filter(function(l){ return !(l.catId===catId && l.typeId===typeId); });
+        if(openTypeByCat[catId] === typeId) openTypeByCat[catId] = null;
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    manageContent.querySelectorAll('[data-quick-add]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var catId = btn.getAttribute('data-quick-add');
+        var input = document.getElementById('quickType_'+catId);
+        var raw = input.value.trim();
+        if(!raw) return;
+        var parsed = parseFrequencyFromName(raw);
+        if(!parsed.name) return;
+        var newType = { id: uid('t'), name: parsed.name };
+        if(parsed.freq) newType.freq = parsed.freq;
+        findCat(catId).types.push(newType);
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
+    document.getElementById('addCatBtn').addEventListener('click', function(){
+      var nameInput = document.getElementById('newCatName');
+      var iconInput = document.getElementById('newCatIcon');
+      var badInput = document.getElementById('newCatBad');
+      var name = nameInput.value.trim();
+      if(!name){ nameInput.focus(); return; }
+      var isBad = !!(badInput && badInput.checked);
+      var icon = iconInput.value.trim() || (isBad ? '⚠' : '📌');
+      var newCat = { id: uid('cat'), name: name, icon: icon, color: selectedColor, isBad: isBad, types: [] };
+      state.categories.push(newCat);
+      if(state.tabs[currentTabIndex]) state.tabs[currentTabIndex].widgets.push(newCat.id);
+      saveState();
+      nameInput.value = '';
+      iconInput.value = '';
+      if(badInput) badInput.checked = false;
+      renderManageContent();
+      renderTabs();
+    });
+  }
+
+  document.getElementById('journalModalContent').addEventListener('click', function(e){
+    var backBtn = e.target.closest('[data-journal-back]');
+    if(backBtn){ openJournalHistory(); return; }
+    var viewBtn = e.target.closest('[data-journal-view]');
+    if(viewBtn){ viewJournalEntry(viewBtn.getAttribute('data-journal-view')); return; }
+  });
+
+  document.getElementById('manageBtn').addEventListener('click', openManageModal);
+  document.querySelectorAll('[data-close]').forEach(function(btn){
+    btn.addEventListener('click', closeModals);
+  });
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay){
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeModals();
+    });
+  });
+
+  /* =========================================================================
+     TIMER POPUP
+     ========================================================================= */
+
   var timerTickInterval = null;
   var timerMoveInterval = null;
 
@@ -2024,7 +2862,6 @@
     document.getElementById('timerReadout').textContent = fmtTimerReadout(Date.now() - state.activeTimer.startTs);
   }
 
-  // Makes the companion sprite wander back and forth inside the timer screen, Pokéwatch-style.
   function startTimerSpriteMovement(){
     var screen = document.getElementById('timerScreen');
     var sprite = document.getElementById('timerSprite');
@@ -2104,17 +2941,17 @@
     commitLog(t.catId, t.typeId, elapsedMin);
   });
 
-  // Companion message based on current weather, if available (uses Open-Meteo free API, no key required).
-  function fetchWeatherMessage(){
+  /* =========================================================================
+     WEATHER-based companion caption (Open-Meteo, no API key)
+     ========================================================================= */
 
-    // only update every 10s max
+  function fetchWeatherMessage(){
     var lastFetch = localStorage.getItem('lastWeatherFetch');
     if(lastFetch && (Date.now() - new Date(lastFetch).getTime()) < 10000){
       console.log('Weather fetch skipped (last fetch was less than 10s ago).');
       return;
     }
     localStorage.setItem('lastWeatherFetch', new Date().toISOString());
-    // default to sydney, AU if geolocation fails
     var geo = navigator.geolocation;
     if (geo) {
       geo.getCurrentPosition(async function(position) {
@@ -2123,11 +2960,11 @@
         await fetchWeather(lat, lon);
       }, async function(error) {
         console.warn('Geolocation failed, using default location (Sydney, AU).', error);
-        await fetchWeather(-33.8688, 151.2093); // Sydney, AU
+        await fetchWeather(-33.8688, 151.2093);
       });
     } else {
       console.warn('Geolocation not supported, using default location (Sydney, AU).');
-      fetchWeather(-33.8688, 151.2093); // Sydney, AU
+      fetchWeather(-33.8688, 151.2093);
     }
 
     async function fetchWeather(lat, lon) {
@@ -2138,18 +2975,11 @@
         const data = await resp.json();
         console.log('Weather data:', data, resp);
         if(!data || !data.current_weather) return;
-        var msg;
 
-        // break down weather into sunniness, temperature, and precipitation
-
-        // then can generate appropriate messages
-        // grass types prefer sun, fire types prefer heat, water types prefer rain, etc.
-
-        let weathercode = data.current_weather.weathercode; // weather code for sun/rain/snow/etc.
-        let temp = data.current_weather.temperature; // temperature in Celsius
+        let weathercode = data.current_weather.weathercode;
+        let temp = data.current_weather.temperature;
         console.log('Weather code:', weathercode, 'Temp:', temp);
 
-        // get weather condition
         let weatherCondition = '';
         if (weathercode === 0) weatherCondition = 'sunny';
         else if (weathercode === 1 || weathercode === 2) weatherCondition = 'partly cloudy';
@@ -2158,13 +2988,10 @@
         else if (weathercode === 71 || weathercode === 73 || weathercode === 75) weatherCondition = 'snowy';
         else weatherCondition = 'unpredictable';
 
-        // get pokemon type
-        let pokemonType = getPokemonInfo().line.type; // grass, fire, water
+        let pokemonType = getPokemonInfo().line.type;
 
-        // generate message based on weather and pokemon type
-        // get possible messages for the pokemon type
         let possibleMessages = [];
-        getPokemonInfo().line.messages.forEach(function(msgObj) {
+        getPokemonInfo().line.messages && getPokemonInfo().line.messages.forEach(function(msgObj) {
           if (msgObj.type === 'happy' && (weatherCondition === 'sunny' || weatherCondition === 'partly cloudy')) {
             possibleMessages.push(msgObj.msg);
           } else if (msgObj.type === 'sad' && (weatherCondition === 'rainy' || weatherCondition === 'snowy')) {
@@ -2173,14 +3000,11 @@
             possibleMessages.push(msgObj.msg);
           }
         });
-        possibleMessages = possibleMessages.concat(type_x_weather_condition_messages[pokemonType][weatherCondition]);
+        possibleMessages = possibleMessages.concat(type_x_weather_condition_messages[pokemonType][weatherCondition] || []);
 
-        // Replace "your ... pokemon" or "water type pokemon" or "POKEMON" with the actual pokemon name
         possibleMessages = possibleMessages.map(function(msg) {
-          // filter out all instaces of "your" "fire type" with empty
           msg = msg.toLowerCase();
           msg = msg.replace(/your |.*?type|/gi, '');
-          // then replace pokemon etc
           return msg.replace(/your .* pokemon|pokemon|Pokémon|POKEMON/gi, getPokemonInfo().stage.name);
         });
 
@@ -2189,301 +3013,31 @@
           var randomIndex = Math.floor(Math.random() * possibleMessages.length);
           var randomMessage = possibleMessages[randomIndex];
           localStorage.setItem('tamaCaption', randomMessage);
-          document.getElementById('tamaCaption').textContent = randomMessage
         } else {
-          document.getElementById('tamaCaption').textContent = 'POKEMON is feeling neutral.';
+          localStorage.setItem('tamaCaption', getPokemonInfo().stage.name + ' is feeling neutral.');
         }
+        renderTabs();
 
       } catch (err) {
         console.warn('Weather fetch failed:', err);
       };
     }
-    // fetchWeather(-33.8688, 151.2093); // Sydney, AU
   }
 
-  function renderManageContent(){
-    var html = '';
-    if(!state.categories.length){
-      html += '<div class="empty-state">No categories yet — add your first one below.</div>';
-    }
-    state.categories.forEach(function(cat){
-      html += '<div class="manage-cat-block">' +
-        '<div class="manage-cat-head">' +
-          '<span style="font-size:18px">'+(cat.icon||'📌')+'</span>' +
-          '<strong>'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</strong>' +
-          '<button class="mini-danger" data-toggle-bad="'+cat.id+'" style="border-color:var(--accent2);color:var(--accent2);">'+(cat.isBad?'Mark good':'Mark bad')+'</button>' +
-          '<button class="mini-danger" data-del-cat="'+cat.id+'">Delete category</button>' +
-        '</div>' +
-        '<div class="type-chip-row">' +
-          cat.types.map(function(t){
-            var tier = getMultiplierTier(t);
-            return '<span class="type-chip">'+escapeHtml(t.name)+
-              (t.freq ? '<span class="freq-badge">'+fmtFreq(t.freq)+'</span>' : '') +
-              '<button class="chip-mult-btn" data-cycle-mult="'+cat.id+'|'+t.id+'" title="Cycle XP/HP multiplier"><img class="chip-candy" src="'+tier.sprite+'" alt="'+tier.label+' candy"> '+tier.mult+'x</button>' +
-              '<button class="chip-freq-btn" data-freq-edit="'+cat.id+'|'+t.id+'" title="Set repeat frequency">⏱</button>' +
-              '<button class="chip-freq-btn" data-toggle-checklist="'+cat.id+'|'+t.id+'" title="Toggle TODO/checkbox mode">'+(t.isChecklist?'☑':'📋')+'</button>' +
-              '<button data-del-type="'+cat.id+'|'+t.id+'">&times;</button></span>';
-          }).join('') +
-          (cat.types.length===0 ? '<span style="font-size:12px;color:var(--text-faint)">No activities yet</span>' : '') +
-        '</div>' +
-        '<div class="inline-add">' +
-          '<input type="text" placeholder="New activity name (e.g. Wash sheets 2w)" maxlength="30" id="quickType_'+cat.id+'">' +
-          '<button data-quick-add="'+cat.id+'">Add</button>' +
-        '</div>' +
-      '</div>';
-    });
-
-    html += '<div class="new-cat-form">' +
-      '<label>New category name</label>' +
-      '<input type="text" id="newCatName" placeholder="e.g. Reading" maxlength="24">' +
-      '<label>Icon (emoji)</label>' +
-      '<input type="text" id="newCatIcon" placeholder="📚" maxlength="4">' +
-      '<label>Color</label>' +
-      '<div class="swatches" id="colorSwatches"></div>' +
-      '<label class="checkbox-row"><input type="checkbox" id="newCatBad"> This is a bad habit (reduces companion HP instead of XP)</label>' +
-      '<button class="primary-btn" id="addCatBtn">Add category</button>' +
-    '</div>';
-
-    // Reroll pokemon button
-    html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
-      '<button class="primary-btn" id="rerollBtn">Reroll companion</button>' +
-    '</div>';
-
-    // Select companion dropdown
-    html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
-      '<label>Select companion</label>' +
-      '<select id="selectCompanion">' +
-        STARTER_LINES.map(function(line, idx){
-          return '<option value="'+idx+'">'+line.stages[0].name+'</option>';
-        }).join('') +
-      '</select>' +
-    '</div>';
-
-    // Clear log button
-    html += '<div class="new-cat-form" style="margin-top:24px; text-align:center;">' +
-      '<button class="primary-btn" id="clearLogBtn">Clear all logs</button>' +
-    '</div>';
-    manageContent.innerHTML = html;
-
-    
-
-    // reroll button handler
-    var reroll = document.getElementById('rerollBtn');
-    if(reroll){
-      reroll.addEventListener('click', function(){
-        // force a new companion for this week
-        var wk = weekIndex(Date.now());
-        var prevIdx = state.pokemon ? state.pokemon.lineIndex : -1;
-        var idx = Math.floor(Math.random() * STARTER_LINES.length);
-        if(STARTER_LINES.length > 1){
-          while(idx === prevIdx){ idx = Math.floor(Math.random() * STARTER_LINES.length); }
-        }
-        state.pokemon = { weekKey: wk, lineIndex: idx, xp: 0 };
-        pokemonJustRolled = true;
-        saveState();
-        renderAll();
-        showToast('Rerolled companion!');
-      });
-    }
-
-    // select companion dropdown handler
-    var selectComp = document.getElementById('selectCompanion');
-    if(selectComp){
-      selectComp.value = state.pokemon ? state.pokemon.lineIndex : 0;
-      selectComp.addEventListener('change', function(){
-        var idx = parseInt(selectComp.value, 10);
-        var wk = weekIndex(Date.now());
-        state.pokemon = { weekKey: wk, lineIndex: idx, xp: 0 };
-        pokemonJustRolled = true;
-        saveState();
-        renderAll();
-        showToast('Selected companion: ' + STARTER_LINES[idx].stages[0].name);
-      });
-    }
-
-    // clear log button handler
-    var clearLog = document.getElementById('clearLogBtn');
-    if(clearLog){
-      clearLog.addEventListener('click', function(){
-        if(!confirm('Are you sure you want to clear all logged activity? This cannot be undone.')) return;
-        state.logs = [];
-        saveState();
-        renderAll();
-        showToast('All logs cleared.');
-      });
-    }
-
-    // color swatches
-    var swatchWrap = document.getElementById('colorSwatches');
-    CAT_COLORS.forEach(function(c){
-      var sw = document.createElement('div');
-      sw.className = 'swatch' + (c === selectedColor ? ' selected' : '');
-      sw.style.background = c;
-      sw.addEventListener('click', function(){
-        selectedColor = c;
-        swatchWrap.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('selected'); });
-        sw.classList.add('selected');
-      });
-      swatchWrap.appendChild(sw);
-    });
-
-    // toggle a category between "bad habit" and normal
-    manageContent.querySelectorAll('[data-toggle-bad]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var catId = btn.getAttribute('data-toggle-bad');
-        var cat = findCat(catId);
-        cat.isBad = !cat.isBad;
-        saveState();
-        renderManageContent();
-        renderCategories();
-      });
-    });
-
-    // manually set/clear a repeat frequency on an activity type
-    manageContent.querySelectorAll('[data-freq-edit]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var parts = btn.getAttribute('data-freq-edit').split('|');
-        var catId = parts[0], typeId = parts[1];
-        var cat = findCat(catId);
-        var type = findType(cat, typeId);
-        var current = type.freq ? (type.freq.n + type.freq.unit) : '';
-        var val = prompt('Repeat frequency for "'+type.name+'" (e.g. "2w" for every 2 weeks, "10d" for every 10 days). Leave blank to remove.', current);
-        if(val === null) return; // cancelled
-        val = val.trim();
-        if(!val){
-          delete type.freq;
-        } else {
-          var freq = parseFrequencyString(val);
-          if(!freq){ alert('Could not understand that. Try a format like "2w" or "10d".'); return; }
-          type.freq = freq;
-        }
-        saveState();
-        renderManageContent();
-        renderCategories();
-      });
-    });
-
-    // cycle an activity's XP/HP multiplier tier (XS -> M -> XL -> XS)
-    manageContent.querySelectorAll('[data-cycle-mult]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var parts = btn.getAttribute('data-cycle-mult').split('|');
-        var cat = findCat(parts[0]);
-        var type = findType(cat, parts[1]);
-        cycleMultiplierTier(type);
-        saveState();
-        renderManageContent();
-        renderCategories();
-        var tier = getMultiplierTier(type);
-        showToast(type.name + ' now worth ' + tier.mult + 'x (' + tier.label + ' candy)');
-      });
-    });
-
-    // toggle an activity between a timed log and a TODO/checkbox item
-    manageContent.querySelectorAll('[data-toggle-checklist]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var parts = btn.getAttribute('data-toggle-checklist').split('|');
-        var cat = findCat(parts[0]);
-        var type = findType(cat, parts[1]);
-        type.isChecklist = !type.isChecklist;
-        saveState();
-        renderManageContent();
-        renderCategories();
-        showToast(type.name + ' is now a ' + (type.isChecklist ? 'TODO checkbox' : 'timed activity'));
-      });
-    });
-
-    // delete category
-    manageContent.querySelectorAll('[data-del-cat]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var catId = btn.getAttribute('data-del-cat');
-        var cat = findCat(catId);
-        var count = entriesFor(catId, null).length;
-        var msg = 'Delete "'+cat.name+'" and its activities?' + (count ? ' This will also remove '+count+' logged entr'+(count===1?'y':'ies')+'.' : '');
-        if(!confirm(msg)) return;
-        state.categories = state.categories.filter(function(c){ return c.id!==catId; });
-        state.logs = state.logs.filter(function(l){ return l.catId!==catId; });
-        delete openTypeByCat[catId];
-        saveState();
-        renderManageContent();
-        renderAll();
-      });
-    });
-
-    // delete type
-    manageContent.querySelectorAll('[data-del-type]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var parts = btn.getAttribute('data-del-type').split('|');
-        var catId = parts[0], typeId = parts[1];
-        var cat = findCat(catId);
-        var type = findType(cat, typeId);
-        var count = entriesFor(catId, typeId).length;
-        var msg = 'Delete "'+type.name+'"?' + (count ? ' This will also remove '+count+' logged entr'+(count===1?'y':'ies')+'.' : '');
-        if(!confirm(msg)) return;
-        cat.types = cat.types.filter(function(t){ return t.id!==typeId; });
-        state.logs = state.logs.filter(function(l){ return !(l.catId===catId && l.typeId===typeId); });
-        if(openTypeByCat[catId] === typeId) openTypeByCat[catId] = null;
-        saveState();
-        renderManageContent();
-        renderAll();
-      });
-    });
-
-    // quick-add type per category
-    manageContent.querySelectorAll('[data-quick-add]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var catId = btn.getAttribute('data-quick-add');
-        var input = document.getElementById('quickType_'+catId);
-        var raw = input.value.trim();
-        if(!raw) return;
-        var parsed = parseFrequencyFromName(raw);
-        if(!parsed.name) return;
-        var newType = { id: uid('t'), name: parsed.name };
-        if(parsed.freq) newType.freq = parsed.freq;
-        findCat(catId).types.push(newType);
-        saveState();
-        renderManageContent();
-        renderCategories();
-      });
-    });
-
-    // add category
-    document.getElementById('addCatBtn').addEventListener('click', function(){
-      var nameInput = document.getElementById('newCatName');
-      var iconInput = document.getElementById('newCatIcon');
-      var badInput = document.getElementById('newCatBad');
-      var name = nameInput.value.trim();
-      if(!name){ nameInput.focus(); return; }
-      var isBad = !!(badInput && badInput.checked);
-      var icon = iconInput.value.trim() || (isBad ? '⚠' : '📌');
-      state.categories.push({ id: uid('cat'), name: name, icon: icon, color: selectedColor, isBad: isBad, types: [] });
-      saveState();
-      nameInput.value = '';
-      iconInput.value = '';
-      if(badInput) badInput.checked = false;
-      renderManageContent();
-      renderCategories();
-    });
-  }
-
-  document.getElementById('manageBtn').addEventListener('click', openManageModal);
-  document.querySelectorAll('[data-close]').forEach(function(btn){
-    btn.addEventListener('click', closeModals);
-  });
-  document.querySelectorAll('.modal-overlay').forEach(function(overlay){
-    overlay.addEventListener('click', function(e){
-      if(e.target === overlay) closeModals();
-    });
-  });
+  /* =========================================================================
+     INIT
+     ========================================================================= */
 
   trackSleepWake();
-  renderAll();
+  wireTabsScroller();
+  renderTabs();
   fetchWeatherMessage();
 
-  // If a timer was left running (e.g. the page was refreshed), resume it rather than losing it.
   if(state.activeTimer){
     openTimerPopup(state.activeTimer.catId, state.activeTimer.typeId, state.activeTimer.startTs);
   }
 })();
+
 </script>
 </body>
 </html>
