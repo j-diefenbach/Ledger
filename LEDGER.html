@@ -114,8 +114,9 @@
   .icon-btn:active{ background:var(--surface-3); }
 
   /* ---------- Tabs ---------- */
+  /* Tab pills are hidden — navigation between tabs is swipe/slide-only (see .tabs-scroller). */
   .tabs-nav{
-    display:flex;
+    display:none;
     gap:8px;
     overflow-x:auto;
     width:100vw;
@@ -862,6 +863,102 @@
   .cal-detail-mins{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); }
   .cal-detail-journal{ margin-top:8px; font-family:var(--font-mono); font-size:11px; color:var(--accent2); }
 
+  /* ---------- Reminders (quick-add + upcoming) ---------- */
+  .reminder-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px;
+    margin-bottom:12px;
+  }
+  .reminder-add-header, .reminder-upcoming-header{
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
+  }
+  .reminder-add-title{ font-family:var(--font-display); font-weight:700; font-size:15px; }
+  .reminder-pill-btn{
+    background:none; border:1px solid var(--line); color:var(--accent2);
+    font-family:var(--font-mono); font-size:11px; padding:4px 9px; border-radius:14px; cursor:pointer;
+    white-space:nowrap;
+  }
+  .reminder-add-header .reminder-pill-btn{ margin-left:auto; }
+  .reminder-upcoming-header .reminder-pill-btn + .reminder-pill-btn{ margin-left:8px; }
+  .reminder-quick-row{ display:flex; gap:8px; }
+  .reminder-quick-input{
+    flex:1; min-width:0;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--text);
+    padding:9px 10px; border-radius:9px; font-size:13.5px; font-family:var(--font-body);
+  }
+  .reminder-quick-add-btn{
+    background:var(--accent); color:#211505; border:none;
+    font-family:var(--font-display); font-weight:700; font-size:13px;
+    padding:0 16px; border-radius:9px; cursor:pointer;
+  }
+  .reminder-quick-hint{
+    font-family:var(--font-mono); font-size:10px; color:var(--text-faint);
+    margin:6px 2px 2px;
+  }
+  .reminder-sub-label{
+    font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:0.5px;
+    color:var(--text-faint); margin:12px 0 6px 2px;
+  }
+  .reminder-empty{ font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim); padding:6px 2px; }
+
+  .reminder-row{
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+    padding:8px 9px; margin-bottom:6px;
+  }
+  .reminder-row.done .reminder-row-text{ color:var(--text-faint); text-decoration:line-through; }
+  .reminder-check{
+    width:22px; height:22px; flex-shrink:0;
+    border-radius:7px; border:1px solid var(--line); background:var(--bg);
+    color:var(--accent2); font-size:12px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .reminder-check.done{ background:var(--accent2); color:#0c2320; border-color:var(--accent2); }
+  .reminder-row-main{ flex:1; min-width:0; cursor:pointer; }
+  .reminder-row-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .reminder-row-text{
+    font-size:13px; font-weight:600;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;
+  }
+  .reminder-row-when{
+    font-family:var(--font-mono); font-size:10px; color:var(--text-dim);
+    margin-left:auto; white-space:nowrap; flex-shrink:0; padding-left:6px;
+  }
+  .reminder-del{
+    background:none; border:none; color:var(--text-faint); font-size:16px; cursor:pointer;
+    flex-shrink:0; line-height:1; padding:2px 4px;
+  }
+  .reminder-del:active{ color:var(--danger); }
+  .reminder-pri{ font-weight:700; font-size:12px; flex-shrink:0; }
+  .reminder-pri-1{ color:var(--accent); }
+  .reminder-pri-2{ color:var(--danger); }
+
+  .reminder-day-scroller{
+    display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch; touch-action:pan-x;
+    margin:0 -14px; padding:0 14px;
+  }
+  .reminder-day-page{ flex:0 0 100%; scroll-snap-align:start; min-width:0; box-sizing:border-box; padding-right:14px; }
+  .reminder-day-label{
+    font-family:var(--font-display); font-weight:700; font-size:13px; margin-bottom:8px;
+  }
+
+  .reminder-week-list{ display:flex; flex-direction:column; gap:8px; }
+  .reminder-week-row{ display:flex; gap:10px; align-items:flex-start; }
+  .reminder-week-date{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim);
+    width:64px; flex-shrink:0; padding-top:3px;
+  }
+  .reminder-week-items{ flex:1; min-width:0; display:flex; flex-wrap:wrap; gap:5px; }
+  .reminder-week-chip{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:14px;
+    padding:3px 9px; font-size:11px; cursor:pointer; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis; max-width:100%;
+  }
+  .reminder-week-empty{ font-family:var(--font-mono); font-size:11px; color:var(--text-faint); padding-top:3px; }
+
   /* ---------- Timer popup ---------- */
   .timer-card{ text-align:center; }
   .timer-screen{
@@ -1101,6 +1198,15 @@
   <div class="modal-card">
     <button class="modal-close" data-close="journalModal">&times;</button>
     <div id="journalModalContent"></div>
+  </div>
+</div>
+
+<!-- Reminder detail popup: exact date/time, repeat frequency, priority -->
+<div class="modal-overlay hidden" id="reminderDetailModal">
+  <div class="modal-card">
+    <button class="modal-close" data-close="reminderDetailModal">&times;</button>
+    <h2 id="reminderDetailTitle">New reminder</h2>
+    <div id="reminderDetailContent"></div>
   </div>
 </div>
 
@@ -1346,7 +1452,7 @@
   // Each tab has an ordered widget list. Companion defaults to the first slot of every tab.
   function ensureTabs(){
     if(!state.tabs || !state.tabs.length){
-      var widgets = ['companion', 'dailyTodos', 'sleep', 'journal', 'calendar'];
+      var widgets = ['companion', 'dailyTodos', 'reminderAdd', 'reminderUpcoming', 'sleep', 'journal', 'calendar'];
       state.categories.forEach(function(c){ widgets.push(c.id); });
       widgets.push('history');
       state.tabs = [{ id: uid('tab'), name: 'Main', widgets: widgets }];
@@ -1358,6 +1464,8 @@
   function widgetLabel(key){
     if(key === 'companion') return '🐾 Companion';
     if(key === 'dailyTodos') return '🎯 Today\'s 3';
+    if(key === 'reminderAdd') return '⏰ Reminders';
+    if(key === 'reminderUpcoming') return '📆 Upcoming';
     if(key === 'sleep') return '😴 Sleep';
     if(key === 'journal') return '📓 Journal';
     if(key === 'calendar') return '📅 Calendar';
@@ -1367,7 +1475,7 @@
   }
 
   function availableWidgetOptions(tab){
-    var all = [['companion', '🐾 Companion'], ['dailyTodos', '🎯 Today\'s 3'], ['sleep', '😴 Sleep'], ['journal', '📓 Journal'], ['calendar', '📅 Calendar'], ['history', '📜 History']];
+    var all = [['companion', '🐾 Companion'], ['dailyTodos', '🎯 Today\'s 3'], ['reminderAdd', '⏰ Reminders'], ['reminderUpcoming', '📆 Upcoming'], ['sleep', '😴 Sleep'], ['journal', '📓 Journal'], ['calendar', '📅 Calendar'], ['history', '📜 History']];
     state.categories.forEach(function(c){ all.push([c.id, (c.icon || '📌') + ' ' + c.name]); });
     return all.filter(function(pair){ return tab.widgets.indexOf(pair[0]) === -1; })
       .map(function(pair){ return '<option value="' + pair[0] + '">' + escapeHtml(pair[1]) + '</option>'; }).join('');
@@ -1748,6 +1856,423 @@
       '<h2 style="margin-top:0;">' + dLabel + '</h2>' +
       '<div class="journal-entry-full">' + escapeHtml(rec.text || '') + '</div>' +
       '<div class="journal-entry-meta">' + (rec.words||0) + ' words</div>';
+  }
+
+  /* ---------------- Reminders ---------------- */
+  // state.reminders: [{ id, text, dueTs (ms|null), allDay, repeat:{n,unit}|null,
+  //                      priority (0/1/2), done, completedDates:{'YYYY-MM-DD':true}, createdTs }]
+  // dueTs === null means "inbox" (no date resolved yet). Repeating reminders use dueTs as the
+  // anchor date/time and completedDates to track which occurrences were checked off.
+  function ensureReminders(){
+    if(!state.reminders) state.reminders = [];
+    return state.reminders;
+  }
+
+  var reminderViewMode = 'day';   // 'day' | 'week', for the Upcoming widget
+  var reminderDayIndex = 0;       // which day-page the Upcoming widget's slider is showing
+  var reminderEditingId = null;   // id currently open in the detail modal, or null for "new"
+  var REMINDER_DAY_SPAN = 14;
+
+  var REMINDER_WEEKDAY_RE = /\b(?:on\s+)?(today|tomorrow|mon(?:day)?|tues?(?:day)?|wed(?:nesday)?|thur?s?(?:day)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?)\b/i;
+  var REMINDER_WEEKDAY_INDEX = { sun:0, mon:1, tue:2, wed:3, thu:4, fri:5, sat:6 };
+
+  // Parses shorthand like "Call mom 1pm thu !!" or "Water plants every 3d" into
+  // { text, dueTs, allDay, repeat, priority }. Unrecognized trailing/leading tokens are left
+  // in `text`; if no date/time token is found at all, dueTs stays null (an "inbox" item).
+  function parseReminderShorthand(raw){
+    var s = ' ' + (raw || '').trim().replace(/\s+/g, ' ') + ' ';
+    var priority = 0, repeat = null, dueTs = null, allDay = false;
+
+    if(/\s!!\s/.test(s)){ priority = 2; s = s.replace(/\s!!\s/, ' '); }
+    else if(/\s!\s/.test(s)){ priority = 1; s = s.replace(/\s!\s/, ' '); }
+
+    var repM = s.match(/\bevery\s+(\d+)?\s*(days?|d|weeks?|wks?|w)\b/i);
+    if(repM){
+      var n = parseInt(repM[1], 10) || 1;
+      repeat = { n: n, unit: /^w/i.test(repM[2]) ? 'w' : 'd' };
+      s = s.replace(repM[0], ' ');
+    } else if(/\bdaily\b/i.test(s)){
+      repeat = { n: 1, unit: 'd' };
+      s = s.replace(/\bdaily\b/i, ' ');
+    } else if(/\bweekly\b/i.test(s)){
+      repeat = { n: 1, unit: 'w' };
+      s = s.replace(/\bweekly\b/i, ' ');
+    }
+
+    var relM = s.match(/\bin\s+(\d+)\s*(minutes?|mins?|m|hours?|hrs?|h)\b/i);
+    if(relM){
+      var amount = parseInt(relM[1], 10);
+      dueTs = Date.now() + amount * (/^h/i.test(relM[2]) ? 3600000 : 60000);
+      allDay = false;
+      s = s.replace(relM[0], ' ');
+    } else {
+      var dayBaseTs = null, isWeekdayName = false;
+      var dayM = s.match(REMINDER_WEEKDAY_RE);
+      if(dayM){
+        var tok = dayM[1].toLowerCase();
+        var base = new Date(); base.setHours(0,0,0,0);
+        if(tok === 'tomorrow'){ base.setDate(base.getDate() + 1); }
+        else if(tok !== 'today'){
+          isWeekdayName = true;
+          var targetDow = REMINDER_WEEKDAY_INDEX[tok.slice(0,3)];
+          base.setDate(base.getDate() + ((targetDow - base.getDay() + 7) % 7));
+        }
+        dayBaseTs = base.getTime();
+        s = s.replace(dayM[0], ' ');
+      }
+
+      var timeM = s.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/i) || s.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
+      var hour = null, minute = 0;
+      if(timeM){
+        if(timeM[3]){
+          hour = parseInt(timeM[1], 10) % 12;
+          minute = timeM[2] ? parseInt(timeM[2], 10) : 0;
+          if(/pm/i.test(timeM[3])) hour += 12;
+        } else {
+          hour = parseInt(timeM[1], 10);
+          minute = parseInt(timeM[2], 10);
+        }
+        s = s.replace(timeM[0], ' ');
+      }
+
+      if(hour != null){
+        var d = new Date(dayBaseTs != null ? dayBaseTs : Date.now());
+        if(dayBaseTs == null) d.setHours(0,0,0,0);
+        d.setHours(hour, minute, 0, 0);
+        dueTs = d.getTime();
+        allDay = false;
+        if(dueTs <= Date.now()){
+          if(dayBaseTs == null) dueTs += 86400000;
+          else if(isWeekdayName) dueTs += 7*86400000;
+        }
+      } else if(dayBaseTs != null){
+        dueTs = dayBaseTs;
+        allDay = true;
+      }
+    }
+
+    if(repeat && dueTs == null){
+      var anchor = new Date(); anchor.setHours(9,0,0,0);
+      dueTs = anchor.getTime();
+      allDay = true;
+    }
+
+    return { text: s.replace(/\s+/g, ' ').trim(), dueTs: dueTs, allDay: allDay, repeat: repeat, priority: priority };
+  }
+
+  function findReminder(id){ return ensureReminders().find(function(r){ return r.id === id; }); }
+
+  function addReminder(fields){
+    var rem = {
+      id: uid('rem'),
+      text: fields.text || 'Reminder',
+      dueTs: fields.dueTs != null ? fields.dueTs : null,
+      allDay: !!fields.allDay,
+      repeat: fields.repeat || null,
+      priority: fields.priority || 0,
+      done: false,
+      completedDates: {},
+      createdTs: Date.now()
+    };
+    ensureReminders().push(rem);
+    saveState();
+    return rem;
+  }
+
+  function updateReminder(id, fields){
+    var rem = findReminder(id);
+    if(!rem) return;
+    rem.text = fields.text || 'Reminder';
+    rem.dueTs = fields.dueTs != null ? fields.dueTs : null;
+    rem.allDay = !!fields.allDay;
+    rem.repeat = fields.repeat || null;
+    rem.priority = fields.priority || 0;
+    saveState();
+  }
+
+  function deleteReminder(id){
+    state.reminders = ensureReminders().filter(function(r){ return r.id !== id; });
+    saveState();
+  }
+
+  // Whether a (possibly repeating) reminder has an occurrence on the given YYYY-MM-DD.
+  function reminderOccursOn(rem, dateStr){
+    if(rem.dueTs == null) return false;
+    var anchorStr = localDateStr(rem.dueTs);
+    if(!rem.repeat) return anchorStr === dateStr;
+    var anchorDate = dateFromStr(anchorStr), targetDate = dateFromStr(dateStr);
+    if(targetDate < anchorDate) return false;
+    var diffDays = Math.round((targetDate - anchorDate) / 86400000);
+    var intervalDays = rem.repeat.unit === 'w' ? rem.repeat.n * 7 : rem.repeat.n;
+    return intervalDays > 0 && diffDays % intervalDays === 0;
+  }
+
+  function isReminderDoneOn(rem, dateStr){
+    if(rem.repeat) return !!(rem.completedDates && rem.completedDates[dateStr]);
+    return !!rem.done;
+  }
+
+  function toggleReminderDone(remId, dateStr){
+    var rem = findReminder(remId);
+    if(!rem) return;
+    if(rem.repeat){
+      if(!rem.completedDates) rem.completedDates = {};
+      rem.completedDates[dateStr] = !rem.completedDates[dateStr];
+    } else {
+      rem.done = !rem.done;
+    }
+    saveState();
+  }
+
+  function remindersForDate(dateStr){
+    return ensureReminders().filter(function(r){ return reminderOccursOn(r, dateStr); }).sort(function(a,b){
+      var ta = a.allDay ? -1 : (new Date(a.dueTs).getHours()*60 + new Date(a.dueTs).getMinutes());
+      var tb = b.allDay ? -1 : (new Date(b.dueTs).getHours()*60 + new Date(b.dueTs).getMinutes());
+      if(ta !== tb) return ta - tb;
+      return b.priority - a.priority;
+    });
+  }
+
+  function unscheduledReminders(){
+    return ensureReminders().filter(function(r){ return r.dueTs == null && !r.done; });
+  }
+
+  function overdueReminders(){
+    var today = todayKey();
+    return ensureReminders().filter(function(r){
+      if(r.dueTs == null || r.repeat || r.done) return false;
+      return localDateStr(r.dueTs) < today;
+    });
+  }
+
+  function priorityMarkHtml(p){
+    if(p === 2) return '<span class="reminder-pri reminder-pri-2">‼</span>';
+    if(p === 1) return '<span class="reminder-pri reminder-pri-1">!</span>';
+    return '';
+  }
+
+  function fmtReminderWhen(rem){
+    if(rem.dueTs == null) return 'No date';
+    var d = new Date(rem.dueTs);
+    var dateStr = localDateStr(rem.dueTs), todayStr = todayKey();
+    var label;
+    if(dateStr === todayStr) label = 'Today';
+    else if(dateStr === localDateStr(Date.now() + 86400000)) label = 'Tomorrow';
+    else label = d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+    if(!rem.allDay) label += ', ' + d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+    if(rem.repeat) label += ' · ' + fmtFreq(rem.repeat);
+    return label;
+  }
+
+  function reminderRowHtml(rem, dateStr, showWhen){
+    var effDate = dateStr || (rem.dueTs != null ? localDateStr(rem.dueTs) : '');
+    var done = isReminderDoneOn(rem, effDate);
+    var timeLabel = (!rem.allDay && rem.dueTs != null) ? new Date(rem.dueTs).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) : '';
+    return '<div class="reminder-row' + (done?' done':'') + '">' +
+      '<button class="reminder-check' + (done?' done':'') + '" data-reminder-toggle="' + rem.id + '|' + effDate + '">' + (done?'✓':'') + '</button>' +
+      '<div class="reminder-row-main" data-reminder-edit="' + rem.id + '">' +
+        '<div class="reminder-row-top">' + priorityMarkHtml(rem.priority) +
+          '<span class="reminder-row-text">' + escapeHtml(rem.text || '(untitled)') + '</span>' +
+          (showWhen ? '<span class="reminder-row-when">' + escapeHtml(fmtReminderWhen(rem)) + '</span>'
+                    : (timeLabel ? '<span class="reminder-row-when">' + timeLabel + '</span>' : (rem.repeat ? '<span class="reminder-row-when">' + fmtFreq(rem.repeat) + '</span>' : ''))) +
+        '</div>' +
+      '</div>' +
+      '<button class="reminder-del" data-reminder-delete="' + rem.id + '" title="Delete">&times;</button>' +
+    '</div>';
+  }
+
+  function reminderAddHtml(){
+    ensureReminders();
+    var overdue = overdueReminders();
+    var unscheduled = unscheduledReminders();
+
+    var sectionsHtml = '';
+    if(overdue.length){
+      sectionsHtml += '<div class="reminder-sub-label">Overdue</div>' +
+        overdue.map(function(r){ return reminderRowHtml(r, localDateStr(r.dueTs), true); }).join('');
+    }
+    if(unscheduled.length){
+      sectionsHtml += '<div class="reminder-sub-label">Inbox</div>' +
+        unscheduled.map(function(r){ return reminderRowHtml(r, '', false); }).join('');
+    }
+    if(!sectionsHtml){
+      sectionsHtml = '<div class="reminder-empty">Nothing overdue or unscheduled 🎉</div>';
+    }
+
+    return '<div class="reminder-card">' +
+      '<div class="reminder-add-header"><span class="reminder-add-title">⏰ Reminders</span><button class="reminder-pill-btn" data-reminder-new title="Set exact time &amp; repeat">+ Detail</button></div>' +
+      '<div class="reminder-quick-row">' +
+        '<input type="text" class="reminder-quick-input" data-reminder-quick-input placeholder="e.g. Call mom 1pm thu !!" maxlength="120">' +
+        '<button class="reminder-quick-add-btn" data-reminder-quick-add>Add</button>' +
+      '</div>' +
+      '<div class="reminder-quick-hint">time · in 40min/2h · day / day+time · every 3d/2w · ! !!</div>' +
+      '<div class="reminder-sections">' + sectionsHtml + '</div>' +
+    '</div>';
+  }
+
+  function reminderDayPageHtml(offset){
+    var d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() + offset);
+    var dateStr = localDateStr(d.getTime());
+    var label = offset === 0 ? 'Today' : (offset === 1 ? 'Tomorrow' : d.toLocaleDateString([], { weekday:'long', month:'short', day:'numeric' }));
+    var items = remindersForDate(dateStr);
+    var body = items.length
+      ? items.map(function(r){ return reminderRowHtml(r, dateStr, false); }).join('')
+      : '<div class="reminder-empty">Nothing scheduled.</div>';
+    return '<div class="reminder-day-page">' +
+      '<div class="reminder-day-label">' + escapeHtml(label) + '</div>' +
+      body +
+    '</div>';
+  }
+
+  function reminderWeekOverviewHtml(){
+    var rows = '';
+    for(var i=0; i<7; i++){
+      var d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() + i);
+      var dateStr = localDateStr(d.getTime());
+      var label = i === 0 ? 'Today' : d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+      var items = remindersForDate(dateStr);
+      rows += '<div class="reminder-week-row">' +
+        '<div class="reminder-week-date">' + escapeHtml(label) + '</div>' +
+        '<div class="reminder-week-items">' +
+          (items.length ? items.map(function(r){
+            var t = (!r.allDay && r.dueTs != null) ? new Date(r.dueTs).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) + ' ' : '';
+            return '<span class="reminder-week-chip" data-reminder-edit="' + r.id + '">' + priorityMarkHtml(r.priority) + escapeHtml(t + (r.text || '(untitled)')) + '</span>';
+          }).join('') : '<span class="reminder-week-empty">—</span>') +
+        '</div>' +
+      '</div>';
+    }
+    return '<div class="reminder-week-list">' + rows + '</div>';
+  }
+
+  function reminderUpcomingHtml(){
+    ensureReminders();
+    var header = '<div class="reminder-upcoming-header">' +
+      '<span class="reminder-add-title">📆 Upcoming</span>' +
+      (reminderViewMode !== 'week' && reminderDayIndex !== 0 ? '<button class="reminder-pill-btn" data-reminder-today title="Jump to today" style="margin-left:auto;">Today</button>' : '') +
+      '<button class="reminder-pill-btn" data-reminder-view-toggle' + (reminderViewMode !== 'week' && reminderDayIndex !== 0 ? '' : ' style="margin-left:auto;"') + '>' + (reminderViewMode === 'week' ? 'Day view' : 'Week overview') + '</button>' +
+    '</div>';
+
+    if(reminderViewMode === 'week'){
+      return '<div class="reminder-card">' + header + reminderWeekOverviewHtml() + '</div>';
+    }
+
+    var pages = '';
+    for(var i=0; i<REMINDER_DAY_SPAN; i++){ pages += reminderDayPageHtml(i); }
+    return '<div class="reminder-card">' + header +
+      '<div class="reminder-day-scroller" id="reminderDayScroller">' + pages + '</div>' +
+    '</div>';
+  }
+
+  function wireReminderDayScroller(){
+    var el = document.getElementById('reminderDayScroller');
+    if(!el) return;
+    el.scrollLeft = reminderDayIndex * el.clientWidth;
+    el.addEventListener('scroll', function(){
+      clearTimeout(el._remScrollDebounce);
+      el._remScrollDebounce = setTimeout(function(){
+        var idx = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
+        if(idx >= 0 && idx < REMINDER_DAY_SPAN) reminderDayIndex = idx;
+      }, 80);
+    });
+  }
+
+  function submitReminderQuickAdd(){
+    var input = document.querySelector('[data-reminder-quick-input]');
+    if(!input) return;
+    var raw = input.value.trim();
+    if(!raw) return;
+    var parsed = parseReminderShorthand(raw);
+    addReminder(parsed);
+    renderTabs();
+    showToast(parsed.dueTs ? 'Reminder set for ' + fmtReminderWhen(parsed) : 'Reminder added to inbox');
+  }
+
+  function openReminderDetailModal(id){
+    reminderEditingId = id;
+    renderReminderDetailModal();
+    document.getElementById('reminderDetailModal').classList.remove('hidden');
+  }
+
+  function renderReminderDetailModal(){
+    var rem = reminderEditingId ? findReminder(reminderEditingId) : null;
+    document.getElementById('reminderDetailTitle').textContent = rem ? 'Edit reminder' : 'New reminder';
+
+    var dueDate = (rem && rem.dueTs != null) ? localDateStr(rem.dueTs) : '';
+    var dueTime = (rem && rem.dueTs != null && !rem.allDay)
+      ? (String(new Date(rem.dueTs).getHours()).padStart(2,'0') + ':' + String(new Date(rem.dueTs).getMinutes()).padStart(2,'0'))
+      : '';
+    var repN = (rem && rem.repeat) ? rem.repeat.n : '';
+    var repUnit = (rem && rem.repeat) ? rem.repeat.unit : 'd';
+    var priority = rem ? rem.priority : 0;
+
+    var html =
+      '<label>What</label>' +
+      '<input type="text" id="remText" maxlength="120" placeholder="Reminder text" value="' + escapeAttr(rem ? rem.text : '') + '">' +
+      '<label>Date</label>' +
+      '<input type="date" id="remDate" value="' + dueDate + '">' +
+      '<label>Time (leave blank for all-day)</label>' +
+      '<input type="time" id="remTime" value="' + dueTime + '">' +
+      '<label>Repeat every</label>' +
+      '<div class="inline-add">' +
+        '<input type="number" id="remRepeatN" min="0" placeholder="none" value="' + repN + '" style="max-width:90px;">' +
+        '<select id="remRepeatUnit">' +
+          '<option value="d"' + (repUnit==='d'?' selected':'') + '>days</option>' +
+          '<option value="w"' + (repUnit==='w'?' selected':'') + '>weeks</option>' +
+        '</select>' +
+      '</div>' +
+      '<label>Priority</label>' +
+      '<select id="remPriority">' +
+        '<option value="0"' + (priority===0?' selected':'') + '>None</option>' +
+        '<option value="1"' + (priority===1?' selected':'') + '>! Medium</option>' +
+        '<option value="2"' + (priority===2?' selected':'') + '>!! High</option>' +
+      '</select>' +
+      '<button class="primary-btn" id="remSaveBtn">' + (rem ? 'Save changes' : 'Add reminder') + '</button>' +
+      (rem ? '<button class="mini-danger" id="remDeleteBtn" style="width:100%;margin-top:10px;padding:10px;">Delete reminder</button>' : '');
+
+    document.getElementById('reminderDetailContent').innerHTML = html;
+
+    document.getElementById('remSaveBtn').addEventListener('click', function(){
+      var text = document.getElementById('remText').value.trim();
+      var dateVal = document.getElementById('remDate').value;
+      var timeVal = document.getElementById('remTime').value;
+      var nVal = parseInt(document.getElementById('remRepeatN').value, 10);
+      var unitVal = document.getElementById('remRepeatUnit').value;
+      var priorityVal = parseInt(document.getElementById('remPriority').value, 10);
+
+      var dueTs = null, allDay = false;
+      if(dateVal){
+        var d = dateFromStr(dateVal);
+        if(timeVal){
+          var tparts = timeVal.split(':');
+          d.setHours(parseInt(tparts[0],10), parseInt(tparts[1],10), 0, 0);
+          allDay = false;
+        } else {
+          d.setHours(9,0,0,0);
+          allDay = true;
+        }
+        dueTs = d.getTime();
+      }
+      var repeat = (nVal && nVal > 0) ? { n: nVal, unit: unitVal } : null;
+      if(repeat && dueTs == null){
+        var anchor = new Date(); anchor.setHours(9,0,0,0);
+        dueTs = anchor.getTime();
+        allDay = true;
+      }
+
+      var fields = { text: text || 'Reminder', dueTs: dueTs, allDay: allDay, repeat: repeat, priority: priorityVal };
+      if(rem){ updateReminder(rem.id, fields); } else { addReminder(fields); }
+      closeModals();
+      renderTabs();
+    });
+
+    if(rem){
+      document.getElementById('remDeleteBtn').addEventListener('click', function(){
+        if(!confirm('Delete this reminder?')) return;
+        deleteReminder(rem.id);
+        closeModals();
+        renderTabs();
+      });
+    }
   }
 
   /* ---------------- Calendar overview ---------------- */
@@ -2172,6 +2697,8 @@
   function widgetHtml(key){
     if(key === 'companion') return companionHtml();
     if(key === 'dailyTodos') return dailyTodosHtml();
+    if(key === 'reminderAdd') return reminderAddHtml();
+    if(key === 'reminderUpcoming') return reminderUpcomingHtml();
     if(key === 'sleep') return sleepHtml();
     if(key === 'journal') return journalHtml();
     if(key === 'calendar') return calendarHtml();
@@ -2198,6 +2725,7 @@
     scroller.innerHTML = state.tabs.map(tabPageHtml).join('');
     renderTabsNav();
     scroller.scrollLeft = currentTabIndex * scroller.clientWidth;
+    wireReminderDayScroller();
 
     if(pokemonJustRolled){
       pokemonJustRolled = false;
@@ -2324,6 +2852,54 @@
         openJournalHistory();
         return;
       }
+
+      if(t.closest('[data-reminder-quick-add]')){
+        submitReminderQuickAdd();
+        return;
+      }
+      if(t.closest('[data-reminder-new]')){
+        openReminderDetailModal(null);
+        return;
+      }
+      var remToggle = t.closest('[data-reminder-toggle]');
+      if(remToggle){
+        var rtParts = remToggle.getAttribute('data-reminder-toggle').split('|');
+        toggleReminderDone(rtParts[0], rtParts[1]);
+        renderTabs();
+        return;
+      }
+      var remDel = t.closest('[data-reminder-delete]');
+      if(remDel){
+        var remIdDel = remDel.getAttribute('data-reminder-delete');
+        var remToDel = findReminder(remIdDel);
+        if(remToDel && confirm('Delete reminder "' + (remToDel.text || '(untitled)') + '"?')){
+          deleteReminder(remIdDel);
+          renderTabs();
+        }
+        return;
+      }
+      if(t.closest('[data-reminder-view-toggle]')){
+        reminderViewMode = reminderViewMode === 'week' ? 'day' : 'week';
+        renderTabs();
+        return;
+      }
+      if(t.closest('[data-reminder-today]')){
+        reminderDayIndex = 0;
+        renderTabs();
+        return;
+      }
+      var remEdit = t.closest('[data-reminder-edit]');
+      if(remEdit){
+        openReminderDetailModal(remEdit.getAttribute('data-reminder-edit'));
+        return;
+      }
+    });
+
+    scroller.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && e.target.matches('[data-reminder-quick-input]')){
+        e.preventDefault();
+        submitReminderQuickAdd();
+      }
     });
 
     scroller.addEventListener('input', function(e){
@@ -2365,6 +2941,8 @@
   window.addEventListener('resize', function(){
     var scroller = document.getElementById('tabsScroller');
     if(scroller) scroller.scrollLeft = currentTabIndex * scroller.clientWidth;
+    var remScroller = document.getElementById('reminderDayScroller');
+    if(remScroller) remScroller.scrollLeft = reminderDayIndex * remScroller.clientWidth;
   });
 
   /* =========================================================================
