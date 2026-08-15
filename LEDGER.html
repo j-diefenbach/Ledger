@@ -440,6 +440,19 @@
     color:var(--accent2);
   }
 
+  .cat-target{ margin-top:8px; }
+  .cat-target-track{
+    height:6px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden;
+  }
+  .cat-target-fill{
+    height:100%; background:linear-gradient(90deg, var(--accent2), #7fd8cc); border-radius:4px;
+    transition:width 0.4s ease;
+  }
+  .cat-target-fill.met{ background:linear-gradient(90deg, #8bbf5a, #4f9c4a); }
+  .cat-target-label{
+    display:block; font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim); margin-top:4px;
+  }
+
   .type-select{
     width:100%;
     margin-top:12px;
@@ -681,6 +694,53 @@
   .weather-week-row-icon{ font-size:18px; text-align:center; }
   .weather-week-row-hilo{ display:flex; gap:6px; font-family:var(--font-mono); font-size:12px; }
   .weather-week-row-extra{ display:flex; gap:8px; justify-content:flex-end; }
+
+  /* ---------- Quick Log widget ---------- */
+  .quicklog-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px;
+    margin-bottom:12px;
+  }
+  .quicklog-title{ font-family:var(--font-display); font-weight:700; font-size:15px; margin-bottom:10px; }
+  .quicklog-search-wrap{ position:relative; }
+  .quicklog-search-input{
+    width:100%;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--text);
+    padding:10px 12px; border-radius:10px; font-size:14px; font-family:var(--font-body);
+  }
+  .quicklog-dropdown{
+    position:absolute; left:0; right:0; top:calc(100% + 4px);
+    background:var(--surface-3); border:1px solid var(--line); border-radius:10px;
+    max-height:240px; overflow-y:auto; z-index:6;
+    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+  }
+  .quicklog-dropdown[hidden]{ display:none; }
+  .quicklog-option{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--line);
+    font-size:13.5px;
+  }
+  .quicklog-option:last-child{ border-bottom:none; }
+  .quicklog-option:active{ background:var(--surface-2); }
+  .quicklog-option-icon{ font-size:15px; width:20px; text-align:center; flex-shrink:0; }
+  .quicklog-option-main{ flex:1; min-width:0; }
+  .quicklog-option-name{ font-family:var(--font-display); font-weight:700; }
+  .quicklog-option-cat{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim); }
+  .quicklog-empty-hint{ font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); padding:10px 12px; }
+
+  .quicklog-selected{ margin-top:12px; }
+  .quicklog-selected-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .quicklog-selected-icon{ font-size:22px; flex-shrink:0; }
+  .quicklog-selected-title{ font-family:var(--font-display); font-weight:700; font-size:15px; flex:1; min-width:0; }
+  .quicklog-selected-sub{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim); margin-top:2px; }
+  .quicklog-change-btn{
+    background:none; border:1px solid var(--line); color:var(--accent2);
+    font-family:var(--font-mono); font-size:11px; padding:4px 9px; border-radius:14px; cursor:pointer;
+    flex-shrink:0;
+  }
+  .quicklog-stats{ display:flex; gap:20px; margin:8px 0 4px; }
 
   /* ---------- Detail popup ---------- */
   .detail-header{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
@@ -1512,7 +1572,7 @@
   // Each tab has an ordered widget list. Companion defaults to the first slot of every tab.
   function ensureTabs(){
     if(!state.tabs || !state.tabs.length){
-      var widgets = ['companion', 'weather', 'dailyTodos', 'reminderAdd', 'reminderUpcoming', 'sleep', 'journal', 'calendar'];
+      var widgets = ['companion', 'weather', 'quickLog', 'dailyTodos', 'reminderAdd', 'reminderUpcoming', 'sleep', 'journal', 'calendar'];
       state.categories.forEach(function(c){ widgets.push(c.id); });
       widgets.push('history');
       state.tabs = [{ id: uid('tab'), name: 'Main', widgets: widgets }];
@@ -1524,6 +1584,7 @@
   function widgetLabel(key){
     if(key === 'companion') return '🐾 Companion';
     if(key === 'weather') return '⛅ Weather';
+    if(key === 'quickLog') return '🔎 Quick log';
     if(key === 'dailyTodos') return '🎯 Today\'s 3';
     if(key === 'reminderAdd') return '⏰ Reminders';
     if(key === 'reminderUpcoming') return '📆 Upcoming';
@@ -1536,7 +1597,7 @@
   }
 
   function availableWidgetOptions(tab){
-    var all = [['companion', '🐾 Companion'], ['weather', '⛅ Weather'], ['dailyTodos', '🎯 Today\'s 3'], ['reminderAdd', '⏰ Reminders'], ['reminderUpcoming', '📆 Upcoming'], ['sleep', '😴 Sleep'], ['journal', '📓 Journal'], ['calendar', '📅 Calendar'], ['history', '📜 History']];
+    var all = [['companion', '🐾 Companion'], ['weather', '⛅ Weather'], ['quickLog', '🔎 Quick log'], ['dailyTodos', '🎯 Today\'s 3'], ['reminderAdd', '⏰ Reminders'], ['reminderUpcoming', '📆 Upcoming'], ['sleep', '😴 Sleep'], ['journal', '📓 Journal'], ['calendar', '📅 Calendar'], ['history', '📜 History']];
     state.categories.forEach(function(c){ all.push([c.id, (c.icon || '📌') + ' ' + c.name]); });
     return all.filter(function(pair){ return tab.widgets.indexOf(pair[0]) === -1; })
       .map(function(pair){ return '<option value="' + pair[0] + '">' + escapeHtml(pair[1]) + '</option>'; }).join('');
@@ -1928,6 +1989,10 @@
     if(!state.reminders) state.reminders = [];
     return state.reminders;
   }
+
+  var quickLogQuery = '';         // current text in the Quick Log search box
+  var quickLogSelectedKey = null; // 'catId|typeId' of the currently selected activity, or null
+  var quickLogDropdownOpen = false;
 
   var reminderViewMode = 'day';   // 'day' | 'week', for the Upcoming widget
   var reminderDayIndex = 0;       // which day-page the Upcoming widget's slider is showing
@@ -2538,8 +2603,18 @@
     showToast('Sleep times updated');
   }
 
+  // Start (local midnight) of the Monday that begins the week containing ts.
+  function mondayStart(ts){
+    var d = new Date(ts);
+    d.setHours(0,0,0,0);
+    var dow = d.getDay(); // 0=Sun..6=Sat
+    var diffToMonday = dow === 0 ? 6 : dow - 1;
+    d.setDate(d.getDate() - diffToMonday);
+    return d.getTime();
+  }
+
   function weeklyMinutes(entries){
-    var cutoff = Date.now() - 7*86400000;
+    var cutoff = mondayStart(Date.now());
     return entries.filter(function(e){ return e.ts >= cutoff; })
                   .reduce(function(sum,e){ return sum + e.minutes; }, 0);
   }
@@ -2745,19 +2820,132 @@
 
     var listHtml = '<div class="type-list" data-cat="'+cat.id+'">' + cat.types.map(function(t){ return typeRowHtml(cat, t); }).join('') + '</div>';
 
+    var targetHtml = '';
+    if(cat.weeklyTargetMins){
+      var pct = Math.min(100, Math.round((weekMin / cat.weeklyTargetMins) * 100));
+      var met = weekMin >= cat.weeklyTargetMins;
+      targetHtml = '<div class="cat-target">' +
+        '<div class="cat-target-track"><div class="cat-target-fill'+(met?' met':'')+'" style="width:'+pct+'%"></div></div>' +
+        '<span class="cat-target-label">'+fmtDuration(weekMin)+' / '+fmtDuration(cat.weeklyTargetMins)+' this wk'+(met?' ✓':'')+'</span>' +
+      '</div>';
+    }
+
     return '<div class="category-card" style="--cat-color:'+(cat.color||'#4fa8a0')+'">' +
       '<div class="cat-header">' +
         '<span class="cat-icon">'+(cat.icon||'📌')+'</span>' +
         '<span class="cat-name">'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</span>' +
-        '<div class="cat-meta">' + streakHtml + '<span class="week-total">'+fmtDuration(weekMin)+' this wk</span></div>' +
+        '<div class="cat-meta">' + streakHtml + (cat.weeklyTargetMins ? '' : '<span class="week-total">'+fmtDuration(weekMin)+' this wk</span>') + '</div>' +
       '</div>' +
+      targetHtml +
       dueHtml + listHtml +
+    '</div>';
+  }
+
+  /* ---------------- Quick Log (search + select any activity, then log/time it) ---------------- */
+
+  function allActivitiesFlat(){
+    var out = [];
+    state.categories.forEach(function(cat){
+      cat.types.forEach(function(t){
+        out.push({ catId: cat.id, typeId: t.id, catName: cat.name, catIcon: cat.icon || '📌', catColor: cat.color, isBad: cat.isBad, typeName: t.name });
+      });
+    });
+    return out;
+  }
+
+  function quickLogMatches(query){
+    var all = allActivitiesFlat();
+    var q = (query || '').trim().toLowerCase();
+    if(!q) return all.slice(0, 8);
+    return all.filter(function(a){
+      return a.typeName.toLowerCase().indexOf(q) !== -1 || a.catName.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 8);
+  }
+
+  function quickLogDropdownHtml(){
+    var matches = quickLogMatches(quickLogQuery);
+    if(!matches.length){
+      return '<div class="quicklog-dropdown"><div class="quicklog-empty-hint">No matching activities.</div></div>';
+    }
+    return '<div class="quicklog-dropdown">' + matches.map(function(a){
+      return '<div class="quicklog-option" data-quicklog-pick="'+a.catId+'|'+a.typeId+'">' +
+        '<span class="quicklog-option-icon">'+a.catIcon+'</span>' +
+        '<div class="quicklog-option-main">' +
+          '<div class="quicklog-option-name">'+escapeHtml(a.typeName)+'</div>' +
+          '<div class="quicklog-option-cat">'+escapeHtml(a.catName)+'</div>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+
+  // Selected-activity panel: mirrors the stats shown in the full detail popup (streak, week
+  // total, 14-day heatmap) plus the same log/timer/checklist controls used by "due" items.
+  function quickLogSelectedPanelHtml(catId, typeId){
+    var cat = findCat(catId);
+    var type = cat && findType(cat, typeId);
+    if(!cat || !type){
+      quickLogSelectedKey = null;
+      return '';
+    }
+
+    var entries = entriesFor(catId, typeId);
+    var sInfo = streakInfo(entries);
+    var infoText;
+    if(sInfo.type === 'active'){ infoText = '🔥 '+sInfo.streak+'-day streak'; }
+    else if(sInfo.type === 'stale'){ infoText = sInfo.daysAgo + 'd since last'; }
+    else { infoText = 'Never logged'; }
+
+    var weekMin = weeklyMinutes(entries);
+    var doneToday = isDoneToday(catId, typeId);
+
+    var controlsHtml = type.isChecklist
+      ? '<button class="log-btn due-check-btn">'+(doneToday ? '✓ Done today' : 'Mark done')+'</button>'
+      : '<div class="log-controls">' +
+          '<button class="step-btn" data-step="-5">−5</button>' +
+          '<input type="number" class="minutes-input" value="15" min="5" step="5">' +
+          '<button class="step-btn" data-step="5">+5</button>' +
+          '<button class="step-btn timer-start-btn" title="Start a timer instead">⏱</button>' +
+          '<button class="log-btn">Log</button>' +
+        '</div>';
+
+    return '<div class="quicklog-selected">' +
+      '<div class="quicklog-selected-head">' +
+        '<span class="quicklog-selected-icon">'+(cat.icon||'📌')+'</span>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="quicklog-selected-title">'+escapeHtml(type.name)+'</div>' +
+          '<div class="quicklog-selected-sub">'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+(type.freq?' <span class="freq-badge">'+fmtFreq(type.freq)+'</span>':'')+'</div>' +
+        '</div>' +
+        '<button class="quicklog-change-btn" data-quicklog-clear>Change</button>' +
+      '</div>' +
+      '<div class="quicklog-stats">' +
+        '<div class="detail-stat"><span class="detail-stat-label">Status</span><span class="detail-stat-value">'+infoText+'</span></div>' +
+        '<div class="detail-stat"><span class="detail-stat-label">This week</span><span class="detail-stat-value">'+fmtDuration(weekMin)+'</span></div>' +
+      '</div>' +
+      heatmapHtml(catId, typeId, cat.isBad, false) +
+      '<div class="quicklog-panel" data-cat="'+catId+'" data-type="'+typeId+'" style="margin-top:12px;">' + controlsHtml + '</div>' +
+    '</div>';
+  }
+
+  function quickLogHtml(){
+    var selected = quickLogSelectedKey ? quickLogSelectedKey.split('|') : null;
+    var showDropdown = !selected && quickLogDropdownOpen;
+
+    return '<div class="quicklog-card">' +
+      '<div class="quicklog-title">🔎 Quick log</div>' +
+      (selected ? '' :
+        '<div class="quicklog-search-wrap">' +
+          '<input type="text" class="quicklog-search-input" data-quicklog-input placeholder="Search an activity…" maxlength="40" value="'+escapeAttr(quickLogQuery)+'" autocomplete="off">' +
+          (showDropdown ? quickLogDropdownHtml() : '') +
+        '</div>'
+      ) +
+      (selected ? quickLogSelectedPanelHtml(selected[0], selected[1]) : '') +
     '</div>';
   }
 
   function widgetHtml(key){
     if(key === 'companion') return companionHtml();
     if(key === 'weather') return weatherHtml();
+    if(key === 'quickLog') return quickLogHtml();
     if(key === 'dailyTodos') return dailyTodosHtml();
     if(key === 'reminderAdd') return reminderAddHtml();
     if(key === 'reminderUpcoming') return reminderUpcomingHtml();
@@ -2839,6 +3027,51 @@
       if(t.closest('[data-sleep-edit]')){
         openSleepEditor();
         return;
+      }
+
+      var qlPick = t.closest('[data-quicklog-pick]');
+      if(qlPick){
+        quickLogSelectedKey = qlPick.getAttribute('data-quicklog-pick');
+        quickLogQuery = '';
+        quickLogDropdownOpen = false;
+        renderTabs();
+        return;
+      }
+      if(t.closest('[data-quicklog-clear]')){
+        quickLogSelectedKey = null;
+        quickLogQuery = '';
+        quickLogDropdownOpen = false;
+        renderTabs();
+        return;
+      }
+
+      var qlPanel = t.closest('.quicklog-panel');
+      if(qlPanel){
+        var qlCat = qlPanel.getAttribute('data-cat');
+        var qlType = qlPanel.getAttribute('data-type');
+
+        var qlStepBtn = t.closest('.step-btn[data-step]');
+        if(qlStepBtn){
+          var qlDelta = parseInt(qlStepBtn.getAttribute('data-step'), 10);
+          var qlInput = qlPanel.querySelector('.minutes-input');
+          var qlVal = parseInt(qlInput.value, 10) || 0;
+          qlInput.value = Math.max(5, qlVal + qlDelta);
+          return;
+        }
+        if(t.closest('.timer-start-btn')){
+          startTimerFor(qlCat, qlType);
+          return;
+        }
+        if(t.closest('.due-check-btn')){
+          if(!isDoneToday(qlCat, qlType)) commitLog(qlCat, qlType, CHECKLIST_MINUTES);
+          return;
+        }
+        if(t.closest('.log-btn')){
+          var qlMinsInput = qlPanel.querySelector('.minutes-input');
+          var qlMins = parseInt(qlMinsInput.value, 10);
+          if(qlMins > 0) commitLog(qlCat, qlType, qlMins);
+          return;
+        }
       }
 
       if(t.closest('[data-weather-today]')){
@@ -2978,6 +3211,26 @@
       if(input.matches('[data-journal-input]')){
         journalHandleInput(input);
       }
+      if(input.matches('[data-quicklog-input]')){
+        quickLogQuery = input.value;
+        quickLogDropdownOpen = true;
+        var wrap = input.closest('.quicklog-search-wrap');
+        if(wrap){
+          var existing = wrap.querySelector('.quicklog-dropdown');
+          if(existing) existing.remove();
+          wrap.insertAdjacentHTML('beforeend', quickLogDropdownHtml());
+        }
+      }
+    });
+
+    scroller.addEventListener('focusin', function(e){
+      if(e.target.matches('[data-quicklog-input]')){
+        quickLogDropdownOpen = true;
+        var wrap = e.target.closest('.quicklog-search-wrap');
+        if(wrap && !wrap.querySelector('.quicklog-dropdown')){
+          wrap.insertAdjacentHTML('beforeend', quickLogDropdownHtml());
+        }
+      }
     });
 
     scroller.addEventListener('change', function(e){
@@ -3008,6 +3261,13 @@
       }, 80);
     });
   }
+
+  document.addEventListener('click', function(e){
+    if(!quickLogDropdownOpen) return;
+    if(e.target.closest('.quicklog-search-wrap')) return;
+    quickLogDropdownOpen = false;
+    renderTabs();
+  });
 
   window.addEventListener('resize', function(){
     var scroller = document.getElementById('tabsScroller');
@@ -3166,6 +3426,7 @@
           '<span style="font-size:18px">'+(cat.icon||'📌')+'</span>' +
           '<strong>'+escapeHtml(cat.name)+(cat.isBad?' <span class="bad-tag">bad habit</span>':'')+'</strong>' +
           '<button class="mini-danger" data-toggle-bad="'+cat.id+'" style="border-color:var(--accent2);color:var(--accent2);">'+(cat.isBad?'Mark good':'Mark bad')+'</button>' +
+          '<button class="mini-danger" data-target-edit="'+cat.id+'" style="border-color:var(--accent);color:var(--accent);">'+(cat.weeklyTargetMins ? '🎯 '+fmtDuration(cat.weeklyTargetMins)+'/wk' : '🎯 Set target')+'</button>' +
           '<button class="mini-danger" data-del-cat="'+cat.id+'">Delete category</button>' +
         '</div>' +
         '<div class="type-chip-row">' +
@@ -3340,6 +3601,27 @@
     }
 
     // ---- Category toggles ----
+    manageContent.querySelectorAll('[data-target-edit]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var catId = btn.getAttribute('data-target-edit');
+        var cat = findCat(catId);
+        var currentHrs = cat.weeklyTargetMins ? (cat.weeklyTargetMins / 60) : '';
+        var val = prompt('Weekly target for "'+cat.name+'" in hours (e.g. "2" or "1.5"). Leave blank to remove.', currentHrs);
+        if(val === null) return;
+        val = val.trim();
+        if(!val){
+          delete cat.weeklyTargetMins;
+        } else {
+          var hrs = parseFloat(val);
+          if(!hrs || hrs <= 0){ alert('Please enter a positive number of hours, e.g. "2" or "1.5".'); return; }
+          cat.weeklyTargetMins = Math.round(hrs * 60);
+        }
+        saveState();
+        renderManageContent();
+        renderTabs();
+      });
+    });
+
     manageContent.querySelectorAll('[data-toggle-bad]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var catId = btn.getAttribute('data-toggle-bad');
