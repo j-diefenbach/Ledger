@@ -630,6 +630,58 @@
     width:100%;
   }
 
+  /* ---------- Weather widget ---------- */
+  .weather-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:12px 14px;
+    margin-bottom:12px;
+  }
+  .weather-loading{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim); padding:6px 2px;
+  }
+  .weather-day-row{
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+    padding-bottom:10px; border-bottom:1px dashed var(--line); margin-bottom:10px;
+  }
+  .weather-icon-big{ font-size:34px; line-height:1; flex-shrink:0; }
+  .weather-day-main{ flex:1; min-width:0; }
+  .weather-hilo{ font-family:var(--font-display); font-weight:700; font-size:17px; display:flex; gap:8px; }
+  .weather-hi{ color:var(--text); }
+  .weather-lo{ color:var(--text-dim); }
+  .weather-loc{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:2px; }
+  .weather-extras{ display:flex; flex-direction:column; align-items:flex-end; gap:3px; flex-shrink:0; }
+  .weather-extra{ font-family:var(--font-mono); font-size:11px; color:var(--accent2); white-space:nowrap; }
+  .weather-week-strip{ display:flex; justify-content:space-between; gap:2px; cursor:pointer; }
+  .weather-week-icon{
+    display:flex; flex-direction:column; align-items:center; gap:2px; flex:1; min-width:0;
+  }
+  .weather-week-label{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); text-transform:uppercase; }
+  .weather-week-emoji{ font-size:16px; }
+  .weather-week-hi{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim); }
+
+  .weather-hourly-list{ display:flex; flex-direction:column; gap:2px; }
+  .weather-hour-row{
+    display:grid; grid-template-columns:52px 28px 40px 1fr 1fr;
+    align-items:center; gap:6px; padding:7px 4px; border-bottom:1px solid var(--line); font-size:12.5px;
+  }
+  .weather-hour-row.now{ color:var(--accent); font-weight:700; }
+  .weather-hour-time{ font-family:var(--font-mono); font-size:11.5px; }
+  .weather-hour-icon{ font-size:16px; text-align:center; }
+  .weather-hour-temp{ font-family:var(--font-mono); }
+  .weather-hour-rain, .weather-hour-wind{ font-family:var(--font-mono); font-size:11px; color:var(--accent2); }
+
+  .weather-week-detail-list{ display:flex; flex-direction:column; gap:2px; }
+  .weather-week-row{
+    display:grid; grid-template-columns:1fr 28px 70px 1fr;
+    align-items:center; gap:8px; padding:9px 4px; border-bottom:1px solid var(--line); font-size:13px;
+  }
+  .weather-week-row-label{ font-family:var(--font-display); font-weight:700; font-size:12.5px; }
+  .weather-week-row-icon{ font-size:18px; text-align:center; }
+  .weather-week-row-hilo{ display:flex; gap:6px; font-family:var(--font-mono); font-size:12px; }
+  .weather-week-row-extra{ display:flex; gap:8px; justify-content:flex-end; }
+
   /* ---------- Detail popup ---------- */
   .detail-header{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
   .detail-cat-icon{ font-size:28px; flex-shrink:0; }
@@ -1210,6 +1262,14 @@
   </div>
 </div>
 
+<!-- Weather detail popup: hourly-today or full-week view -->
+<div class="modal-overlay hidden" id="weatherDetailModal">
+  <div class="modal-card">
+    <button class="modal-close" data-close="weatherDetailModal">&times;</button>
+    <div id="weatherDetailContent"></div>
+  </div>
+</div>
+
 <!-- Timer popup: stays open (persisted to localStorage) until Stopped or Cancelled -->
 <div class="modal-overlay hidden" id="timerModal">
   <div class="modal-card timer-card">
@@ -1452,7 +1512,7 @@
   // Each tab has an ordered widget list. Companion defaults to the first slot of every tab.
   function ensureTabs(){
     if(!state.tabs || !state.tabs.length){
-      var widgets = ['companion', 'dailyTodos', 'reminderAdd', 'reminderUpcoming', 'sleep', 'journal', 'calendar'];
+      var widgets = ['companion', 'weather', 'dailyTodos', 'reminderAdd', 'reminderUpcoming', 'sleep', 'journal', 'calendar'];
       state.categories.forEach(function(c){ widgets.push(c.id); });
       widgets.push('history');
       state.tabs = [{ id: uid('tab'), name: 'Main', widgets: widgets }];
@@ -1463,6 +1523,7 @@
 
   function widgetLabel(key){
     if(key === 'companion') return '🐾 Companion';
+    if(key === 'weather') return '⛅ Weather';
     if(key === 'dailyTodos') return '🎯 Today\'s 3';
     if(key === 'reminderAdd') return '⏰ Reminders';
     if(key === 'reminderUpcoming') return '📆 Upcoming';
@@ -1475,7 +1536,7 @@
   }
 
   function availableWidgetOptions(tab){
-    var all = [['companion', '🐾 Companion'], ['dailyTodos', '🎯 Today\'s 3'], ['reminderAdd', '⏰ Reminders'], ['reminderUpcoming', '📆 Upcoming'], ['sleep', '😴 Sleep'], ['journal', '📓 Journal'], ['calendar', '📅 Calendar'], ['history', '📜 History']];
+    var all = [['companion', '🐾 Companion'], ['weather', '⛅ Weather'], ['dailyTodos', '🎯 Today\'s 3'], ['reminderAdd', '⏰ Reminders'], ['reminderUpcoming', '📆 Upcoming'], ['sleep', '😴 Sleep'], ['journal', '📓 Journal'], ['calendar', '📅 Calendar'], ['history', '📜 History']];
     state.categories.forEach(function(c){ all.push([c.id, (c.icon || '📌') + ' ' + c.name]); });
     return all.filter(function(pair){ return tab.widgets.indexOf(pair[0]) === -1; })
       .map(function(pair){ return '<option value="' + pair[0] + '">' + escapeHtml(pair[1]) + '</option>'; }).join('');
@@ -2696,6 +2757,7 @@
 
   function widgetHtml(key){
     if(key === 'companion') return companionHtml();
+    if(key === 'weather') return weatherHtml();
     if(key === 'dailyTodos') return dailyTodosHtml();
     if(key === 'reminderAdd') return reminderAddHtml();
     if(key === 'reminderUpcoming') return reminderUpcomingHtml();
@@ -2776,6 +2838,15 @@
 
       if(t.closest('[data-sleep-edit]')){
         openSleepEditor();
+        return;
+      }
+
+      if(t.closest('[data-weather-today]')){
+        openWeatherDetail('day');
+        return;
+      }
+      if(t.closest('[data-weather-week]')){
+        openWeatherDetail('week');
         return;
       }
 
@@ -3603,6 +3674,194 @@
   }
 
   /* =========================================================================
+     WEATHER WIDGET (Open-Meteo, no API key — reuses the same free endpoint as
+     the companion caption fetch above, extended with daily/hourly forecast).
+     ========================================================================= */
+
+  var SYDNEY_LOC = { lat: -33.8688, lon: 151.2093, label: 'Sydney' };
+  var WEATHER_CACHE_MS = 15 * 60000; // refetch at most every 15 minutes
+  var WIND_STRONG_KMH = 25;          // only show wind if at/above this
+
+  // Maps Open-Meteo's WMO weather codes down to 4 simple buckets for icons.
+  function weatherBucket(code){
+    if(code === 0 || code === 1) return 'sun';
+    if(code === 2 || code === 3 || code === 45 || code === 48) return 'cloud';
+    if((code >= 51 && code <= 67) || (code >= 80 && code <= 82) || (code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return 'rain';
+    if(code >= 95) return 'storm';
+    return 'cloud';
+  }
+  var WEATHER_ICON = { sun: '☀️', cloud: '⛅', rain: '🌧️', storm: '⛈️' };
+  function weatherIcon(code){ return WEATHER_ICON[weatherBucket(code)]; }
+
+  function fetchWeatherWidgetData(){
+    var cached = state.weather;
+    if(cached && (Date.now() - cached.fetchedAt) < WEATHER_CACHE_MS){
+      return; // still fresh, no need to refetch
+    }
+    var geo = navigator.geolocation;
+    if(geo){
+      geo.getCurrentPosition(function(pos){
+        loadWeatherWidget(pos.coords.latitude, pos.coords.longitude, null);
+      }, function(){
+        loadWeatherWidget(SYDNEY_LOC.lat, SYDNEY_LOC.lon, SYDNEY_LOC.label);
+      }, { timeout: 8000 });
+    } else {
+      loadWeatherWidget(SYDNEY_LOC.lat, SYDNEY_LOC.lon, SYDNEY_LOC.label);
+    }
+  }
+
+  async function loadWeatherWidget(lat, lon, label){
+    var url = 'https://api.open-meteo.com/v1/forecast'
+      + '?latitude=' + lat + '&longitude=' + lon
+      + '&current_weather=true'
+      + '&hourly=temperature_2m,weathercode,precipitation_probability,windspeed_10m'
+      + '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max'
+      + '&timezone=auto&forecast_days=7';
+    try{
+      var resp = await fetch(url);
+      var data = await resp.json();
+      if(!data || !data.daily || !data.hourly) return;
+      state.weather = {
+        fetchedAt: Date.now(),
+        locLabel: label,
+        current: data.current_weather,
+        daily: data.daily,
+        hourly: data.hourly
+      };
+      saveState();
+      renderTabs();
+    }catch(err){
+      console.warn('Weather widget fetch failed:', err);
+    }
+  }
+
+  var weatherDayExpanded = false;
+  var weatherWeekExpanded = false;
+
+  function weatherTodayHourlyIndices(hourly){
+    // Indices in the hourly arrays whose date matches "today" in the location's own timezone.
+    var todayStr = hourly.time[0].slice(0, 10);
+    var idxs = [];
+    for(var i=0; i<hourly.time.length; i++){
+      if(hourly.time[i].slice(0,10) === todayStr) idxs.push(i);
+    }
+    return idxs;
+  }
+
+  function weatherCompactHtml(){
+    var w = state.weather;
+    if(!w){
+      return '<div class="weather-card"><div class="weather-loading">Fetching weather…</div></div>';
+    }
+    var daily = w.daily;
+    var code = daily.weathercode[0];
+    var hi = Math.round(daily.temperature_2m_max[0]);
+    var lo = Math.round(daily.temperature_2m_min[0]);
+    var rainChance = daily.precipitation_probability_max[0];
+    var windMax = Math.round(daily.windspeed_10m_max[0]);
+    var locText = w.locLabel ? w.locLabel : 'Current location';
+
+    var extras = '';
+    if(windMax >= WIND_STRONG_KMH){
+      extras += '<span class="weather-extra">💨 ' + windMax + ' km/h</span>';
+    }
+    if(rainChance > 5){
+      extras += '<span class="weather-extra">💧 ' + rainChance + '%</span>';
+    }
+
+    return '<div class="weather-card">' +
+      '<div class="weather-day-row" data-weather-today title="Tap for hourly breakdown">' +
+        '<span class="weather-icon-big">' + weatherIcon(code) + '</span>' +
+        '<div class="weather-day-main">' +
+          '<div class="weather-hilo"><span class="weather-hi">' + hi + '°</span><span class="weather-lo">' + lo + '°</span></div>' +
+          '<div class="weather-loc">' + escapeHtml(locText) + '</div>' +
+        '</div>' +
+        '<div class="weather-extras">' + extras + '</div>' +
+      '</div>' +
+      weatherWeekStripHtml() +
+    '</div>';
+  }
+
+  function weatherWeekStripHtml(){
+    var w = state.weather;
+    var daily = w.daily;
+    var days = daily.time.length;
+    var icons = '';
+    for(var i=0; i<days; i++){
+      var d = new Date(daily.time[i]);
+      var dLabel = d.toLocaleDateString([], { weekday: 'short' }).slice(0,1);
+      var code = daily.weathercode[i];
+      var hi = Math.round(daily.temperature_2m_max[i]);
+      icons += '<div class="weather-week-icon">' +
+        '<span class="weather-week-label">' + (i===0 ? 'Now' : dLabel) + '</span>' +
+        '<span class="weather-week-emoji">' + weatherIcon(code) + '</span>' +
+        '<span class="weather-week-hi">' + hi + '°</span>' +
+      '</div>';
+    }
+    return '<div class="weather-week-strip" data-weather-week title="Tap for full week">' + icons + '</div>';
+  }
+
+  function weatherHtml(){
+    return weatherCompactHtml();
+  }
+
+  function weatherHourlyDetailHtml(){
+    var w = state.weather;
+    if(!w) return '<div class="empty-state">Weather not loaded yet.</div>';
+    var idxs = weatherTodayHourlyIndices(w.hourly);
+    var nowHour = new Date().getHours();
+    var rows = idxs.map(function(i){
+      var hourDate = new Date(w.hourly.time[i]);
+      var hourNum = hourDate.getHours();
+      var isNow = hourNum === nowHour;
+      var temp = Math.round(w.hourly.temperature_2m[i]);
+      var code = w.hourly.weathercode[i];
+      var rain = w.hourly.precipitation_probability[i];
+      var wind = Math.round(w.hourly.windspeed_10m[i]);
+      var label = hourDate.toLocaleTimeString([], { hour: 'numeric' });
+      return '<div class="weather-hour-row' + (isNow ? ' now' : '') + '">' +
+        '<span class="weather-hour-time">' + (isNow ? 'Now' : label) + '</span>' +
+        '<span class="weather-hour-icon">' + weatherIcon(code) + '</span>' +
+        '<span class="weather-hour-temp">' + temp + '°</span>' +
+        '<span class="weather-hour-rain">' + (rain > 5 ? '💧' + rain + '%' : '') + '</span>' +
+        '<span class="weather-hour-wind">' + (wind >= WIND_STRONG_KMH ? '💨' + wind : '') + '</span>' +
+      '</div>';
+    }).join('');
+    return '<h2>Today, hour by hour</h2><div class="weather-hourly-list">' + rows + '</div>';
+  }
+
+  function weatherWeekDetailHtml(){
+    var w = state.weather;
+    if(!w) return '<div class="empty-state">Weather not loaded yet.</div>';
+    var daily = w.daily;
+    var rows = daily.time.map(function(dateStr, i){
+      var d = new Date(dateStr);
+      var label = i === 0 ? 'Today' : d.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+      var code = daily.weathercode[i];
+      var hi = Math.round(daily.temperature_2m_max[i]);
+      var lo = Math.round(daily.temperature_2m_min[i]);
+      var rain = daily.precipitation_probability_max[i];
+      var wind = Math.round(daily.windspeed_10m_max[i]);
+      return '<div class="weather-week-row">' +
+        '<span class="weather-week-row-label">' + escapeHtml(label) + '</span>' +
+        '<span class="weather-week-row-icon">' + weatherIcon(code) + '</span>' +
+        '<span class="weather-week-row-hilo"><span class="weather-hi">' + hi + '°</span><span class="weather-lo">' + lo + '°</span></span>' +
+        '<span class="weather-week-row-extra">' +
+          (wind >= WIND_STRONG_KMH ? '<span class="weather-extra">💨' + wind + '</span>' : '') +
+          (rain > 5 ? '<span class="weather-extra">💧' + rain + '%</span>' : '') +
+        '</span>' +
+      '</div>';
+    }).join('');
+    return '<h2>7-day forecast</h2><div class="weather-week-detail-list">' + rows + '</div>';
+  }
+
+  function openWeatherDetail(mode){
+    if(!state.weather){ showToast('Weather still loading…'); return; }
+    document.getElementById('weatherDetailContent').innerHTML = mode === 'week' ? weatherWeekDetailHtml() : weatherHourlyDetailHtml();
+    document.getElementById('weatherDetailModal').classList.remove('hidden');
+  }
+
+  /* =========================================================================
      INIT
      ========================================================================= */
 
@@ -3610,6 +3869,7 @@
   wireTabsScroller();
   renderTabs();
   fetchWeatherMessage();
+  fetchWeatherWidgetData();
 
   if(state.activeTimer){
     openTimerPopup(state.activeTimer.catId, state.activeTimer.typeId, state.activeTimer.startTs);
