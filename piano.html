@@ -132,6 +132,9 @@
   }
   .play-toggle-btn.listening{background:var(--accent-deep);}
   .play-status{font-size:.72rem; color:var(--ink-soft);}
+  .sensitivity-row{display:flex; align-items:center; gap:8px; font-size:.72rem; color:var(--ink-soft);}
+  .sensitivity-row input[type=range]{flex:1;}
+  .sensitivity-row span{min-width:1.2em; text-align:center; font-weight:700; color:var(--ink);}
   .spectrogram{width:100%; height:84px; background:var(--black-key); border-radius:8px; display:block; border:1px solid var(--ink);}
   .detected-row{text-align:center; font-size:.78rem; color:var(--ink-soft);}
   .detected-row b{color:var(--ink); font-family:Georgia,serif; font-size:1.05rem;}
@@ -297,6 +300,11 @@
         <div class="play-controls">
           <button class="play-toggle-btn" id="playToggleBtn">🎤 Start listening</button>
           <span class="play-status" id="playStatus">Not listening</span>
+        </div>
+        <div class="sensitivity-row">
+          <label for="micSensitivity">Mic sensitivity</label>
+          <input type="range" id="micSensitivity" min="1" max="10" value="6">
+          <span id="micSensitivityOut">6</span>
         </div>
         <canvas class="spectrogram" id="spectrogram"></canvas>
         <div class="detected-row">Hearing: <b id="detectedNote">—</b></div>
@@ -798,12 +806,12 @@ function midiToKeyId(midi){
   return SEMITONE_TO_LETTER[semitone] + octave;
 }
 // Classic autocorrelation pitch detector (single dominant pitch).
-function autoCorrelate(buf, sampleRate){
+function autoCorrelate(buf, sampleRate, rmsThreshold){
   const SIZE = buf.length;
   let rms = 0;
   for(let i=0;i<SIZE;i++) rms += buf[i]*buf[i];
   rms = Math.sqrt(rms/SIZE);
-  if(rms < 0.01) return -1; // too quiet / silence
+  if(rms < rmsThreshold) return -1; // too quiet / silence
 
   let r1=0, r2=SIZE-1;
   const thres=0.2;
@@ -833,14 +841,14 @@ function autoCorrelate(buf, sampleRate){
   return sampleRate/T0;
 }
 // Best-effort peak-picking for two simultaneous notes (experimental).
-function detectChordPeaks(analyser, sampleRate){
+function detectChordPeaks(analyser, sampleRate, peakThreshold){
   const data = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(data);
   const binWidth = sampleRate/analyser.fftSize;
   const minBin = Math.max(2, Math.floor(60/binWidth)), maxBin = Math.min(data.length-3, Math.ceil(1500/binWidth));
   const peaks=[];
   for(let i=minBin;i<maxBin;i++){
-    if(data[i]>110 && data[i]>=data[i-1] && data[i]>=data[i+1] && data[i]>=data[i-2] && data[i]>=data[i+2]){
+    if(data[i]>peakThreshold && data[i]>=data[i-1] && data[i]>=data[i+1] && data[i]>=data[i-2] && data[i]>=data[i+2]){
       peaks.push({bin:i, amp:data[i]});
     }
   }
@@ -848,8 +856,17 @@ function detectChordPeaks(analyser, sampleRate){
   const top = peaks.slice(0,2).sort((a,b)=>a.bin-b.bin);
   return top.map(p=> midiToKeyId(Math.round(69+12*Math.log2((p.bin*binWidth)/440))));
 }
+// Sensitivity 1 (low) – 10 (high): higher = more input gain and lower detection thresholds.
+function sensitivityParams(){
+  const t = (settings.micSensitivity-1)/9; // 0..1
+  return {
+    gain: 1 + t*7,             // 1x .. 8x input boost
+    rmsThreshold: 0.02 - t*0.017,  // 0.02 .. 0.003
+    peakThreshold: 150 - t*100     // 150 .. 50 (0-255 scale)
+  };
+}
 
-let micStream=null, micSource=null, analyser=null, playRafId=null, pitchIntervalId=null;
+let micStream=null, micSource=null, micGain=null, analyser=null, playRafId=null, pitchIntervalId=null;
 let specCanvas=null, specCtx=null, freqData=null, timeBuf=null;
 let holdCombo=null, holdCount=0;
 const HOLD_TICKS_NEEDED = 5; // ~450ms sustained at 90ms/tick
@@ -898,14 +915,15 @@ function pitchTick(){
   if(!timeBuf) timeBuf = new Float32Array(analyser.fftSize);
   analyser.getFloatTimeDomainData(timeBuf);
 
+  const sp = sensitivityParams();
   const activeStep = (round && mode==='play') ? round.steps[stepIndex] : null;
   const wantChord = activeStep ? activeStep.notes.length>1 : settings.simultaneous;
 
   let detectedIds = [];
   if(wantChord){
-    detectedIds = detectChordPeaks(analyser, audioCtx.sampleRate);
+    detectedIds = detectChordPeaks(analyser, audioCtx.sampleRate, sp.peakThreshold);
   } else {
-    const freq = autoCorrelate(timeBuf, audioCtx.sampleRate);
+    const freq = autoCorrelate(timeBuf, audioCtx.sampleRate, sp.rmsThreshold);
     if(freq>0){
       const midi = Math.round(69+12*Math.log2(freq/440));
       detectedIds = [midiToKeyId(midi)];
@@ -952,10 +970,15 @@ function setupPlayAlong(){
       micStream = stream;
       const ctx = ensureAudio();
       micSource = ctx.createMediaStreamSource(stream);
+      micGain = ctx.createGain();
+      micGain.gain.value = sensitivityParams().gain;
       analyser = ctx.createAnalyser();
       analyser.fftSize = 2048;
       analyser.smoothingTimeConstant = 0.35;
-      micSource.connect(analyser);
+      micSource.connect(micGain);
+      micGain.connect(analyser);
+      // Note: micGain/analyser are never connected to ctx.destination, so the
+      // mic is analyzed only — nothing is played back (no feedback loop).
 
       specCanvas = document.getElementById('spectrogram');
       specCanvas.width = specCanvas.clientWidth || 300;
@@ -980,7 +1003,7 @@ function stopPlayAlong(){
   if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
   if(playRafId){ cancelAnimationFrame(playRafId); playRafId=null; }
   if(pitchIntervalId){ clearInterval(pitchIntervalId); pitchIntervalId=null; }
-  micSource=null; analyser=null;
+  micSource=null; micGain=null; analyser=null;
   holdCombo=null; holdCount=0;
   highlightDetectedKeys([]);
   const statusEl = document.getElementById('playStatus');
@@ -992,7 +1015,7 @@ function stopPlayAlong(){
 }
 
 /* ---------- app state ---------- */
-const settings = { clef:'treble', accidentals:false, key:'none', simultaneous:false, sequence:false, seqLength:3, maxInterval:6, scrollMode:'approx', song:'none', matchOctave:true };
+const settings = { clef:'treble', accidentals:false, key:'none', simultaneous:false, sequence:false, seqLength:3, maxInterval:6, scrollMode:'approx', song:'none', matchOctave:true, micSensitivity:6 };
 let mode = 'sight'; // 'sight' = read the staff, tap the key. 'ear' = hear the note, guess the key. 'play' = play/sing it, mic detects it.
 const MAX_ATTEMPTS = 3;
 let round=null, stepIndex=0, selected=[], inputLocked=false;
@@ -1016,6 +1039,10 @@ function playCurrentStepSound(){
 function updateModeUI(){
   document.getElementById('replayBtn').hidden = mode!=='ear';
   document.getElementById('playPanel').hidden = mode!=='play';
+  if(mode==='play'){
+    document.getElementById('micSensitivity').value = settings.micSensitivity;
+    document.getElementById('micSensitivityOut').textContent = settings.micSensitivity;
+  }
   updateHint();
 }
 
@@ -1222,6 +1249,11 @@ document.getElementById('modeSeg').addEventListener('click', (e)=>{
 });
 document.getElementById('playToggleBtn').addEventListener('click', ()=>{
   if(micStream) stopPlayAlong(); else setupPlayAlong();
+});
+document.getElementById('micSensitivity').addEventListener('input', (e)=>{
+  settings.micSensitivity = +e.target.value;
+  document.getElementById('micSensitivityOut').textContent = e.target.value;
+  if(micGain) micGain.gain.value = sensitivityParams().gain;
 });
 document.getElementById('replayBtn').addEventListener('click', ()=>{
   ensureAudio();
