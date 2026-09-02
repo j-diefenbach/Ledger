@@ -446,6 +446,12 @@
     <label class="switch"><input type="checkbox" id="matchOctaveToggle" checked><span class="track"><span class="thumb"></span></span></label>
   </div>
 
+  <h3>Feedback</h3>
+  <div class="row">
+    <div><label class="name">Reveal note letter</label><span class="desc">Show the note name next to it once you guess correctly</span></div>
+    <label class="switch"><input type="checkbox" id="showLettersToggle"><span class="track"><span class="thumb"></span></span></label>
+  </div>
+
   <button class="apply-btn" id="applyBtn">Apply &amp; start</button>
   <button class="reset-btn" id="resetStatsBtn">Reset stats</button>
 </div>
@@ -536,6 +542,12 @@ function makeExplicitNote(letter,accidental,octave,clef){
   const keyId = blackKeyId(letter,accidental,octave);
   const step = staffStep(letter,octave,clef);
   return {letter,accidental,octave,clef,midi,keyId,step};
+}
+function keyIdToNoteForClef(keyId, clef){
+  const m = /^([A-G])(#?)(-?\d+)$/.exec(keyId);
+  if(!m) return null;
+  const letter=m[1], accidental=m[2]?'#':'', octave=parseInt(m[3],10);
+  return makeExplicitNote(letter, accidental, octave, clef);
 }
 
 /* ---------- songs ----------
@@ -728,7 +740,26 @@ function renderStaff(round, stepIndex){
         // notehead
         const fill = step.answered ? (step.correct?'var(--green)':'var(--ink)') : 'var(--ink)';
         svg += `<ellipse cx="${nx}" cy="${ny}" rx="9" ry="7" transform="rotate(-18 ${nx} ${ny})" fill="${fill}"/>`;
+        // optional revealed letter name, once this note has been guessed correctly
+        if(step.answered && step.correct && settings.showNoteLetters){
+          svg += `<text x="${nx+15}" y="${ny+5}" font-size="13" font-weight="700" font-family="Georgia,serif" fill="var(--green)">${noteLabel(n)}</text>`;
+        }
       });
+    }
+    // for immediate (MIDI) feedback: overlay the actually-played wrong note in red,
+    // alongside the target, so the interval of the mistake is visible at a glance
+    if(step.wrongNote){
+      const wn = step.wrongNote;
+      const wx = x + 26;
+      const wy = stepToY(wn.step);
+      ledgerSteps(wn.step).forEach(ls=>{
+        const ly = stepToY(ls);
+        svg += `<line x1="${wx-15}" y1="${ly}" x2="${wx+15}" y2="${ly}" stroke="var(--red)" stroke-width="2" opacity="0.85"/>`;
+      });
+      if(wn.accidental){
+        svg += `<text x="${wx-24}" y="${wy+6}" font-size="20" font-family="serif" fill="var(--red)">${ACCIDENTAL_SYMBOL[wn.accidental]}</text>`;
+      }
+      svg += `<ellipse cx="${wx}" cy="${wy}" rx="9" ry="7" transform="rotate(-18 ${wx} ${wy})" fill="var(--red)" opacity="0.9"/>`;
     }
     // cursor triangle under current step
     if(i===stepIndex){
@@ -1054,6 +1085,7 @@ function handleMidiNoteOn(keyId){
   if(el) el.classList.add('key-detected');
   const dn = document.getElementById('detectedNote');
   if(dn) dn.textContent = keyId;
+  lastInputSource = 'midi';
   registerAnswerAttempt(keyId);
 }
 function handleMidiNoteOff(keyId){
@@ -1124,10 +1156,11 @@ function setupMidi(){
 }
 
 /* ---------- app state ---------- */
-const settings = { clef:'treble', accidentals:false, key:'none', simultaneous:false, sequence:false, seqLength:3, maxInterval:6, scrollMode:'approx', song:'none', matchOctave:true, micSensitivity:6, playInput:'mic' };
+const settings = { clef:'treble', accidentals:false, key:'none', simultaneous:false, sequence:false, seqLength:3, maxInterval:6, scrollMode:'approx', song:'none', matchOctave:true, micSensitivity:6, playInput:'mic', showNoteLetters:false };
 let mode = 'sight'; // 'sight' = read the staff, tap the key. 'ear' = hear the note, guess the key. 'play' = play/sing it, mic or MIDI detects it.
 const MAX_ATTEMPTS = 3;
 let round=null, stepIndex=0, selected=[], inputLocked=false;
+let lastInputSource = 'tap'; // 'tap' | 'midi' — controls whether feedback is instant (MIDI) or has a reading pause
 const stats = {correct:0,total:0,streak:0};
 let customSongRawText = '';
 
@@ -1194,12 +1227,12 @@ function scrollToCurrent(){
 }
 
 
-function flashKey(id, type){
+function flashKey(id, type, instant){
   const el = document.querySelector(`.key[data-key="${CSS.escape(id)}"]`);
   if(!el) return;
   el.classList.remove('key-selected');
   el.classList.add(type==='correct' ? 'flash-correct' : 'flash-wrong');
-  setTimeout(()=> el.classList.remove('flash-correct','flash-wrong'), 700);
+  setTimeout(()=> el.classList.remove('flash-correct','flash-wrong'), instant ? 150 : 700);
 }
 
 function advanceToNext(delay){
@@ -1230,52 +1263,63 @@ function evaluateStep(){
   const required = step.notes.map(n=>n.keyId);
   const correct = required.length===selected.length && required.every(id=>selected.includes(id));
   const fb = document.getElementById('feedback');
+  // MIDI note-on is unambiguous, so skip the "reading time" delays and show
+  // right/wrong immediately — same moment the note sounds, no fade between notes.
+  const instant = lastInputSource==='midi';
 
   if(correct){
-    step.answered = true; step.correct = true;
-    if(mode==='ear') round.revealed = true;
+    step.answered = true; step.correct = true; step.wrongNote = null;
+    if(mode==='ear' || instant) round.revealed = true;
     stats.total++; stats.correct++; stats.streak++;
     updateStatsUI();
 
-    required.forEach(id=> flashKey(id,'correct'));
+    required.forEach(id=> flashKey(id,'correct', instant));
     const names = step.notes.map(noteLabel).join(' + ');
     fb.textContent = '\u2713 ' + names;
     fb.className = 'feedback correct';
     renderStaff(round, stepIndex);
-    advanceToNext(850);
+    advanceToNext(instant ? 0 : 850);
     return;
   }
 
   // wrong guess
   step.attempts = (step.attempts||0) + 1;
   const attemptsLeft = MAX_ATTEMPTS - step.attempts;
-  selected.forEach(id=>{ if(!required.includes(id)) flashKey(id,'wrong'); });
+  selected.forEach(id=>{ if(!required.includes(id)) flashKey(id,'wrong', instant); });
+
+  if(instant){
+    const wrongId = selected.find(id=> !required.includes(id)) || selected[0];
+    step.wrongNote = wrongId ? keyIdToNoteForClef(wrongId, round.clef) : null;
+    round.revealed = true; // need the clef visible to make sense of a pitched red note
+  }
 
   if(attemptsLeft > 0){
     // let them try again — don't reveal the answer yet
     fb.textContent = '\u2717 Try again \u2014 ' + attemptsLeft + ' attempt' + (attemptsLeft===1?'':'s') + ' left';
     fb.className = 'feedback wrong';
-    setTimeout(()=>{
+    renderStaff(round, stepIndex);
+    const resetForRetry = ()=>{
       document.querySelectorAll('.key-selected').forEach(k=>k.classList.remove('key-selected'));
       selected = [];
       inputLocked = false;
       document.getElementById('piano').classList.remove('disabled');
-    }, 850);
+    };
+    if(instant) resetForRetry(); else setTimeout(resetForRetry, 850);
     return;
   }
 
   // out of attempts — reveal the answer
   step.answered = true; step.correct = false;
-  if(mode==='ear') round.revealed = true;
+  if(mode==='ear' || instant) round.revealed = true;
   stats.total++; stats.streak = 0;
   updateStatsUI();
 
-  required.forEach(id=> flashKey(id,'correct'));
+  required.forEach(id=> flashKey(id,'correct', instant));
   const names = step.notes.map(noteLabel).join(' + ');
   fb.textContent = '\u2717 ' + names;
   fb.className = 'feedback wrong';
   renderStaff(round, stepIndex);
-  advanceToNext(1700);
+  advanceToNext(instant ? 0 : 1700);
 }
 
 function registerAnswerAttempt(id){
@@ -1295,6 +1339,7 @@ function handleKeyTap(id, el){
   if(!round) return;
   playKeySound(id);
   if(mode==='play') return; // in Play Along, on-screen taps are just a reference — mic/MIDI do the answering
+  lastInputSource = 'tap';
   registerAnswerAttempt(id);
 }
 
@@ -1325,6 +1370,7 @@ function openDrawer(){
   document.getElementById('customSongClef').value = (SONGS.custom && SONGS.custom.clef) || 'treble';
   document.getElementById('customSongError').textContent = '';
   document.getElementById('matchOctaveToggle').checked = settings.matchOctave;
+  document.getElementById('showLettersToggle').checked = settings.showNoteLetters;
   drawer.classList.add('open'); backdrop.classList.add('open');
 }
 function closeDrawer(){ drawer.classList.remove('open'); backdrop.classList.remove('open'); }
@@ -1419,6 +1465,7 @@ document.getElementById('applyBtn').addEventListener('click', ()=>{
   settings.seqLength = +document.getElementById('seqLenSelect').value;
   settings.maxInterval = +document.getElementById('intervalRange').value;
   settings.matchOctave = document.getElementById('matchOctaveToggle').checked;
+  settings.showNoteLetters = document.getElementById('showLettersToggle').checked;
 
   const songVal = document.getElementById('songSelect').value;
   const errEl = document.getElementById('customSongError');
