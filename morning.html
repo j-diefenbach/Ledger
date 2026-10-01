@@ -122,8 +122,8 @@ $('pt').textContent=j[0].poem.title;$('pa').textContent='by '+(j[0].poet?.name||
 
 // browse
 const NEWS=[['Guardian','https://www.theguardian.com/world/rss'],['Hacker News','https://hnrss.org/frontpage'],['TLDR','https://tldr.tech/api/rss/tech'],['TLDR AI','https://tldr.tech/api/rss/ai']];
-const DEFCH='@ChadCat\n@BubbleBrief\n@DolanDarkest\n@PivotToAI\nUCbfYPyITQ-7l4upoX8nvctg\nUCsBjURrPoezykLs9EqgamOA\nUCknLrEdhRCp1aegoMqRaCZg';
-$('chs').value=L('chs',DEFCH);$('chv').onclick=()=>V('chs',$('chs').value);$('loc').value=L('city','');$('locs').onclick=()=>V('city',$('loc').value);
+const DEFCH='@ChadCat\n@BubbleBrief\nUCJO31lXn1Uo924ha6nO8XlA\nUC9rJrMVgcXTfa8xuMnbhAEA\nUCbfYPyITQ-7l4upoX8nvctg\nUCsBjURrPoezykLs9EqgamOA\nUCknLrEdhRCp1aegoMqRaCZg';
+$('chs').value=L('chs2',DEFCH);$('chv').onclick=()=>V('chs2',$('chs').value);$('loc').value=L('city','');$('locs').onclick=()=>V('city',$('loc').value);
 let mins=10;document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{mins=+b.dataset.m;document.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('p',x===b))});
 const bt=Timer(r=>$('bt').textContent=fmt(r),()=>{$('lock').style.display='flex';$('pl').src='';beeps(3,700);unwake()});
 $('lk').onclick=()=>{$('lock').style.display='none';$('bmain').style.display='none';$('bset').style.display='block'};
@@ -131,7 +131,10 @@ $('bgo').onclick=()=>{$('bset').style.display='none';$('bmain').style.display='b
 const cut=Date.now()-864e5,pd=s=>new Date(String(s).replace(' ','T')+'Z').getTime();
 async function rss(u){const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(u));const j=await r.json();return{t:j.feed?.title||'',items:j.items||[]}}
 const txt=h=>new DOMParser().parseFromString(String(h).replace(/<br\s*\/?>|<\/p>|<\/div>|<\/li>/gi,'\n'),'text/html').body.textContent.replace(/\n{3,}/g,'\n\n').trim();
-async function yt(id){const u='https://www.youtube.com/feeds/videos.xml?channel_id='+id;try{const x=new DOMParser().parseFromString(await (await fetch(prox(u))).text(),'text/xml'),e=[...x.getElementsByTagName('entry')];if(!e.length)throw 0;const g=(n,t)=>n.getElementsByTagName(t)[0]?.textContent||'';return{t:g(x,'name'),items:e.map(n=>({v:g(n,'yt:videoId'),title:g(n,'title'),d:Date.parse(g(n,'published')),x:g(n,'media:description')}))}}catch{const r=await rss(u);return{t:r.t,items:r.items.map(i=>({v:((i.guid||i.link).match(/(?:yt:video:|v=)([\w-]{11})/)||[])[1],title:i.title,d:pd(i.pubDate),x:i.description||''})).filter(i=>i.v)}}}
+const API=new Set(['UCJO31lXn1Uo924ha6nO8XlA','UC9rJrMVgcXTfa8xuMnbhAEA']);
+async function yt(id){if(API.has(id))try{const r=await rss('https://www.youtube.com/feeds/videos.xml?channel_id='+id),o=r.items.map(i=>({v:((i.guid||i.link).match(/(?:yt:video:|v=)([\w-]{11})/)||[])[1],title:i.title,d:pd(i.pubDate),x:i.description||i.content||''})).filter(i=>i.v);if(o.length)return{t:r.t,items:o}}catch{}
+ return yt2(id)}
+async function yt2(id){const u='https://www.youtube.com/feeds/videos.xml?channel_id='+id;try{const x=new DOMParser().parseFromString(await (await fetch(prox(u))).text(),'text/xml'),e=[...x.getElementsByTagName('entry')];if(!e.length)throw 0;const g=(n,t)=>n.getElementsByTagName(t)[0]?.textContent||'';return{t:g(x,'name'),items:e.map(n=>({v:g(n,'yt:videoId'),title:g(n,'title'),d:Date.parse(g(n,'published')),x:g(n,'media:description')}))}}catch{const r=await rss(u);return{t:r.t,items:r.items.map(i=>({v:((i.guid||i.link).match(/(?:yt:video:|v=)([\w-]{11})/)||[])[1],title:i.title,d:pd(i.pubDate),x:i.description||''})).filter(i=>i.v)}}}
 async function chId(x){x=x.trim();if(/^UC[\w-]{22}$/.test(x))return x;const c=L('chid',{});if(c[x])return c[x];const h=await (await fetch(prox('https://www.youtube.com/'+x))).text();const m=h.match(/channel_id=(UC[\w-]{22})/)||h.match(/"channelId":"(UC[\w-]{22})"/)||h.match(/"externalId":"(UC[\w-]{22})"/);if(!m)throw 0;c[x]=m[1];V('chid',c);return m[1]}
 async function weather(){const el=document.createElement('div');el.className='card';el.textContent='Weather: loading…';$('feed').append(el);
 try{let p=L('geo',null),city=L('city','');if(city){const g=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&name='+encodeURIComponent(city))).json();const r=g.results[0];p={la:r.latitude,lo:r.longitude,n:r.name}}
@@ -143,7 +146,7 @@ catch{el.textContent='Weather unavailable (allow location or set a city in setti
 function play(id,t){const f=$('pl');f.style.display='block';f.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&playsinline=1';$('plx').innerHTML=esc(t)+' · <a href="https://www.youtube.com/watch?v='+id+'" target="_blank">Open on YouTube</a>'}
 async function loadFeed(){const F=$('feed');F.innerHTML='';weather();const out=[],err=[];
 const jobs=NEWS.map(async([n,u])=>{try{const r=await rss(u);r.items.forEach(i=>{if(/\((sponsor(ed)?)\)/i.test(i.title))return;out.push({src:n,t:i.title,l:i.link,d:pd(i.pubDate),x:i.content||i.description||''})})}catch{err.push(n)}});
-L('chs',DEFCH).split('\n').filter(x=>x.trim()).forEach(c=>jobs.push((async()=>{try{const id=await chId(c),r=await yt(id);r.items.forEach(i=>out.push({src:r.t||c,t:i.title,l:'https://www.youtube.com/watch?v='+i.v,d:i.d,v:i.v,x:i.x}))}catch{err.push(c)}})()));
+L('chs2',DEFCH).split('\n').filter(x=>x.trim()).forEach(c=>jobs.push((async()=>{try{const id=await chId(c),r=await yt(id);r.items.forEach(i=>out.push({src:r.t||c,t:i.title,l:'https://www.youtube.com/watch?v='+i.v,d:i.d,v:i.v,x:i.x}))}catch{err.push(c)}})()));
 await Promise.all(jobs);
 const items=out.filter(i=>i.d>(i.v?Date.now()-1728e5:cut)).sort((a,b)=>b.d-a.d);
 const first=items.find(i=>i.v);if(first)play(first.v,first.t);
