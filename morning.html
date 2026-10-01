@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Morning</title>
+<style>
+:root{--bg:#f6f6f3;--fg:#1d1d1b;--card:#fff;--mut:#6b6b66;--ac:#2f6f5e;--bd:#ddddd6;--warn:#c27c0e;--bad:#b3261e}
+@media(prefers-color-scheme:dark){:root{--bg:#121413;--fg:#ececE6;--card:#1c1f1d;--mut:#9a9a92;--ac:#5fb59d;--bd:#2d312f;--warn:#e0a030;--bad:#ef6a60}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+nav{display:flex;gap:4px;padding:8px;position:sticky;top:0;background:var(--bg);z-index:5;overflow-x:auto;border-bottom:1px solid var(--bd)}
+nav button{flex:1;white-space:nowrap}
+button{font:inherit;padding:10px 14px;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:8px;cursor:pointer}
+button.p,nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+section{display:none;max-width:680px;margin:0 auto;padding:16px}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:0 0 12px}
+.big{font-size:min(22vw,110px);font-weight:700;text-align:center;font-variant-numeric:tabular-nums;line-height:1.1}
+.c{text-align:center}.mut{color:var(--mut);font-size:.9em}.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+h2{margin:.2em 0 .6em}h3{margin:.2em 0}
+input,select,textarea{font:inherit;width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);margin:4px 0}
+#fc{min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;font-size:1.25em;white-space:pre-wrap}
+#fc.h{font-size:3em}
+#sh{position:fixed;inset:0;background:#000;color:#fff;z-index:50;display:none;align-items:center;justify-content:center}
+#sh.on{display:flex}#sh .in{text-align:center}#sh .big{font-size:min(38vw,60vh)}
+@media(orientation:portrait){#sh .in{position:absolute;top:50%;left:50%;width:100vh;height:100vw;margin:-50vw 0 0 -50vh;transform:rotate(90deg);display:flex;flex-direction:column;justify-content:center}}
+#sh.warn{background:#4a3000}#sh.end{animation:fl .6s infinite alternate}@keyframes fl{to{background:#7a0000}}
+#bar{position:sticky;top:53px;z-index:4;background:var(--bg);padding-bottom:6px}
+#pl{display:none;aspect-ratio:16/9;width:100%;border:0;border-radius:10px;background:#000}
+.it{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);color:inherit;text-decoration:none}
+.it img{width:120px;height:68px;object-fit:cover;border-radius:6px;flex:none}
+.src{font-size:.75em;color:var(--ac);text-transform:uppercase;letter-spacing:.05em}
+#lock{position:fixed;inset:0;background:var(--bg);z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.txt{white-space:pre-wrap;font-family:Georgia,serif;font-size:1.05em;line-height:1.7}
+</style></head><body>
+<nav id="nav"></nav>
+
+<section id="ex"><h2>Exercise</h2><div class="card"><div class="c mut" id="exn"></div><div class="big" id="ext">0:00</div><div class="c mut" id="exx"></div>
+<div class="row"><button class="p" id="exs">Start</button><button id="exk">Skip</button><button id="exr">Reset</button></div></div></section>
+
+<section id="shw"><h2>Shower</h2><div class="card c"><div class="big" id="sht">10:00</div>
+<p class="mut">Goes fullscreen landscape, keeps the screen awake. Warning at 1:00 left.</p>
+<div class="row"><button class="p" id="shs">Start shower timer</button></div></div></section>
+
+<section id="fl"><h2>Flashcards</h2>
+<div class="row"><select id="deck" style="width:auto"></select><span class="mut" id="cnt"></span></div>
+<div class="card" id="fc"></div><div class="row" id="rate" style="display:none"><button id="r0">Again</button><button id="r1" class="p">Good</button><button id="r2">Easy</button></div>
+<div class="row"><button id="spk">🔊 Speak</button></div>
+<details class="card"><summary>Add a card</summary><select id="ad"></select><input id="af" placeholder="Front"><textarea id="ab" placeholder="Back"></textarea><button id="aa" class="p">Add</button></details></section>
+
+<section id="rd"><h2>Poem</h2><div class="card"><h3 id="pt">Loading…</h3><div class="mut" id="pa"></div><div class="txt" id="px"></div></div>
+<h2>Story</h2><div class="card"><h3 id="st"></h3><div class="mut" id="sa"></div><div class="txt" id="sx"></div></div></section>
+
+<section id="br"><div id="bset"><h2>Browse</h2><div class="row"><button data-m="10" class="p">10 min</button><button data-m="15">15 min</button></div>
+<div class="row"><button class="p" id="bgo">Start browsing</button></div>
+<details class="card"><summary>YouTube channels (@handle or channel ID, one per line)</summary><textarea id="chs" rows="8"></textarea><button id="chv">Save</button></details>
+<details class="card"><summary>Weather location</summary><input id="loc" placeholder="City (optional, else uses GPS)"><button id="locs">Save</button></details></div>
+<div id="bmain" style="display:none"><div id="bar"><div class="c"><b id="bt">10:00</b> <span class="mut">left</span></div><iframe id="pl" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe><div class="c mut" id="plx"></div></div><div id="feed"></div></div></section>
+
+<div id="lock"><h2>Time's up ⏰</h2><button class="p" id="lk">Close</button></div>
+<div id="sh"><div class="in"><div class="big" id="sbt">10:00</div><div class="mut" id="sbm">tap to pause/resume · hold × to exit</div><div class="row"><button id="sx2">✕ Exit</button></div></div></div>
+
+<script>
+const $=id=>document.getElementById(id),L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},V=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=s=>{s=Math.ceil(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+let AC;function beep(f=880,d=.15){try{AC=AC||new AudioContext();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.3;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch{}}
+const beeps=(n,f)=>{for(let i=0;i<n;i++)setTimeout(()=>beep(f),i*250)};
+function Timer(tick,done){let rem=0,iv=null,last;const t={set(s){rem=s;tick(rem)},start(){if(iv)return;last=Date.now();iv=setInterval(()=>{const n=Date.now();rem-=(n-last)/1e3;last=n;if(rem<=0){rem=0;t.stop();tick(0);done()}else tick(rem)},200)},stop(){clearInterval(iv);iv=null},get rem(){return rem},get on(){return !!iv}};return t}
+let wl;async function wake(){try{wl=await navigator.wakeLock.request('screen')}catch{}}function unwake(){try{wl&&wl.release()}catch{};wl=null}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&(sh.on||bt.on||ex.on))wake()});
+
+// nav
+const SEC=[['ex','Exercise'],['shw','Shower'],['fl','Cards'],['rd','Read'],['br','Browse']];
+SEC.forEach(([id,n])=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>show(id);b.id='n'+id;$('nav').append(b)});
+function show(id){SEC.forEach(([s])=>{$(s).classList.toggle('on',s===id);$('n'+s).classList.toggle('on',s===id)})}show('ex');
+
+// exercise
+const STEPS=[];[['Push-ups',30],['Squats',30],['Sit-ups',30],['Plank',90]].forEach((s,i,a)=>{STEPS.push({n:s[0],s:s[1]});if(i<a.length-1)STEPS.push({n:'Rest',s:10})});
+let si=0;const ex=Timer(r=>{$('ext').textContent=fmt(r);if(r>0&&r<=3&&Math.ceil(r)!==ex.l){ex.l=Math.ceil(r);beep(660,.08)}},()=>{beep(1000,.4);if(si<STEPS.length-1){si++;exLoad();ex.start()}else{$('exn').textContent='Done 💪';$('exs').textContent='Start';si=0;exLoad(1)}});
+function exLoad(keep){const s=STEPS[si];ex.set(s.s);if(!keep)$('exn').textContent=s.n;$('exx').textContent=si<STEPS.length-1?'Next: '+STEPS[si+1].n+' ('+STEPS[si+1].s+'s)':'Last one'}
+$('exs').onclick=()=>{if(ex.on){ex.stop();$('exs').textContent='Resume'}else{ex.start();wake();$('exs').textContent='Pause'}};
+$('exk').onclick=()=>{ex.stop();if(si<STEPS.length-1)si++;exLoad();ex.start();$('exs').textContent='Pause'};
+$('exr').onclick=()=>{ex.stop();si=0;exLoad();$('exs').textContent='Start'};exLoad();
+
+// shower
+let shp=0;const sh=Timer(r=>{$('sht').textContent=$('sbt').textContent=fmt(r);if(r<=60&&r>0&&!shp){shp=1;$('sh').classList.add('warn');beeps(2,660);navigator.vibrate&&navigator.vibrate(300)}},()=>{$('sh').classList.add('end');let n=0;const i=setInterval(()=>{beeps(3,1000);navigator.vibrate&&navigator.vibrate([300,100,300]);if(++n>=5)clearInterval(i)},2000)});
+sh.on=false;
+const shT=Timer(()=>{},()=>{});
+$('shs').onclick=async()=>{shp=0;$('sh').className='on';sh.set(600);sh.start();wake();try{await document.documentElement.requestFullscreen();await screen.orientation.lock('landscape')}catch{}};
+$('sh').onclick=e=>{if(e.target.closest('button'))return;sh.on?sh.stop():sh.start()};
+$('sx2').onclick=()=>{sh.stop();$('sh').className='';unwake();try{screen.orientation.unlock();document.fullscreenElement&&document.exitFullscreen()}catch{}};
+// make sh.on readable (Timer exposes it as getter)
+
+// flashcards
+const D={Mandarin:[['你好','nǐ hǎo\nHello'],['谢谢','xièxie\nThank you'],['不客气','bú kèqi\nYou\'re welcome'],['对不起','duìbuqǐ\nSorry'],['请问','qǐngwèn\nExcuse me / May I ask'],['再见','zàijiàn\nGoodbye'],['早上好','zǎoshang hǎo\nGood morning'],['我叫…','wǒ jiào…\nMy name is…'],['你好吗？','nǐ hǎo ma?\nHow are you?'],['我不懂','wǒ bù dǒng\nI don\'t understand'],['多少钱？','duōshao qián?\nHow much is it?'],['水','shuǐ\nwater'],['人','rén\nperson'],['大','dà\nbig'],['小','xiǎo\nsmall'],['日','rì\nsun / day'],['月','yuè\nmoon / month'],['火','huǒ\nfire'],['好','hǎo\ngood'],['我','wǒ\nI / me']],
+Statistics:[['One-way ANOVA: what does it test?','Whether ≥3 group means differ, via F = between-group variance / within-group variance. Assumes independence, normal residuals, equal variances. Significant F says "some difference", so follow with post-hoc tests.'],['Why ANOVA instead of many t-tests?','Multiple t-tests inflate familywise Type I error. ANOVA is one omnibus test at α.'],['Post-hoc corrections','Tukey HSD (all pairwise, controls FWER), Bonferroni (α/m, conservative), Holm (stepwise, uniformly better than Bonferroni), Benjamini-Hochberg (controls FDR).'],['ANCOVA','ANOVA with continuous covariate(s). Adjusts group means for the covariate and reduces error variance. Needs homogeneity of regression slopes.'],['MANOVA','ANOVA with several correlated DVs at once. Tests whether group mean vectors differ. Statistics: Wilks\' Λ, Pillai\'s trace (most robust), Hotelling-Lawley, Roy. Follow up with univariate ANOVAs or discriminant analysis.'],['MANOVA assumptions','Multivariate normality, homogeneity of covariance matrices (Box\'s M), independence, DVs moderately correlated, no multicollinearity.'],['Repeated-measures ANOVA','Same subjects across conditions. Partitions out between-subject variance. Needs sphericity (Mauchly\'s test); correct with Greenhouse-Geisser or Huynh-Feldt.'],['Linear mixed models','Fixed effects + random effects (e.g. subject/item intercepts and slopes). Handle unbalanced and missing data and nested/crossed structure. Estimated by REML/ML.'],['Regression assumptions','Linearity, independent errors, homoscedasticity, normal residuals, no severe multicollinearity (VIF).'],['PCA vs factor analysis','PCA: orthogonal components maximising total variance (descriptive). FA: latent factors explaining shared covariance, with unique error per variable (model-based).'],['Effect size basics','Cohen\'s d (mean diff / SD), η² / partial η² (variance explained in ANOVA), R², odds ratio. p-values don\'t tell magnitude.'],['Statistical power','P(reject H0 | H1 true) = 1 − β. Rises with n, effect size and α; falls with variance. Do a power analysis before collecting data.'],['Bootstrap vs permutation test','Bootstrap: resample with replacement to estimate sampling distribution (CIs). Permutation: shuffle labels under H0 to build a null distribution (p-values).'],['Frequentist vs Bayesian','Frequentist: P(data | H0), long-run error rates. Bayesian: P(hypothesis | data) via prior × likelihood, giving posteriors and Bayes factors.'],['SEM','Structural equation modelling: measurement model (latent variables) + structural paths. Assess fit with CFI, TLI, RMSEA, SRMR.']],
+People:[['Virginia Woolf','Modernist (1882–1941). Stream of consciousness: Mrs Dalloway, To the Lighthouse. A Room of One\'s Own: women need money and space to write.'],['George Orwell','1903–1950. Animal Farm, 1984. Takeaway: totalitarianism corrupts language and truth; "politics and the English language" decays together.'],['Gabriel García Márquez','1927–2014. One Hundred Years of Solitude. Magical realism: the fantastic told as ordinary fact, reflecting Latin American history.'],['Fyodor Dostoevsky','1821–1881. Crime and Punishment, The Brothers Karamazov. Psychological depth, guilt, free will and faith.'],['Franklin D. Roosevelt','US president 1933–45. New Deal responded to the Great Depression; led US through WWII. Created lasting social safety-net institutions.'],['Winston Churchill','UK PM 1940–45, 1951–55. Rallied Britain against Nazi Germany; also controversial for imperial policy and Bengal famine.'],['Nelson Mandela','1918–2013. Jailed 27 years, then led South Africa out of apartheid (president 1994–99). Emphasised reconciliation over revenge.'],['Otto von Bismarck','Prussian/German chancellor. Unified Germany 1871 through "blood and iron" and realpolitik; built an alliance system and early welfare state.'],['Jane Austen','1775–1817. Pride and Prejudice, Emma. Sharp social comedy on marriage, class and money; free indirect style.'],['Niccolò Machiavelli','1469–1527. The Prince: politics works by power and appearances, not morality. Often read as realism, not endorsement.']]};
+const decks=()=>{const c=L('custom',[]),o={};for(const k in D)o[k]=D[k].concat(c.filter(x=>x[0]===k).map(x=>x.slice(1)));return o};
+const stt=L('srs',{});let q=[],cur=null,flip=0,dk='Mandarin';
+Object.keys(D).forEach(k=>{[$('deck'),$('ad')].forEach(s=>s.add(new Option(k,k)))});
+function load(){const now=Date.now();q=decks()[dk].filter(c=>!(stt[dk+c[0]]?.d>now));next()}
+function next(){cur=q.shift();flip=0;$('rate').style.display='none';$('cnt').textContent=(q.length+(cur?1:0))+' due';const f=$('fc');f.className='card'+(dk==='Mandarin'?' h':'');f.textContent=cur?cur[0]:'All done for today 🎉'}
+$('deck').onchange=e=>{dk=e.target.value;load()};
+$('fc').onclick=()=>{if(!cur||flip)return;flip=1;$('fc').className='card';$('fc').textContent=cur[0]+'\n\n'+cur[1];$('rate').style.display='flex';if(dk==='Mandarin')speak()};
+function speak(){if(cur&&dk==='Mandarin'){const u=new SpeechSynthesisUtterance(cur[0]);u.lang='zh-CN';speechSynthesis.cancel();speechSynthesis.speak(u)}}$('spk').onclick=speak;
+function rate(r){if(!cur)return;const k=dk+cur[0],s=stt[k]||{i:0};if(r===0){s.d=0;q.push(cur)}else{s.i=r===1?Math.max(1,s.i*2):Math.max(3,Math.round(s.i*3.5));s.d=Date.now()+s.i*864e5}stt[k]=s;V('srs',stt);next()}
+[0,1,2].forEach(i=>$('r'+i).onclick=()=>rate(i));
+$('aa').onclick=()=>{if(!$('af').value||!$('ab').value)return;const c=L('custom',[]);c.push([$('ad').value,$('af').value,$('ab').value]);V('custom',c);$('af').value=$('ab').value='';load()};load();
+
+// reading
+const STORIES=[
+['The Tortoise and the Hare','Aesop','A Hare once boasted of his speed before the other animals. "I have never yet been beaten," said he, "when I put forth my full speed. I challenge anyone here to race me." The Tortoise said quietly, "I accept your challenge."\n\n"That is a good joke," said the Hare. "I could dance round you all the way."\n\n"Keep your boasting until you\'ve beaten me," answered the Tortoise. "Shall we race?" So a course was fixed and a start was made. The Hare darted almost out of sight at once, but soon stopped and, to show his contempt for the Tortoise, lay down to have a nap. The Tortoise plodded on and plodded on, and when the Hare awoke from his nap, he saw the Tortoise just near the winning-post and could not run up in time to save the race.\n\nSlow and steady wins the race.'],
+['The Fox and the Grapes','Aesop','A hungry Fox saw some fine bunches of Grapes hanging from a vine that was trained along a high trellis, and did his best to reach them by jumping as high as he could into the air. But it was all in vain, for they were just out of reach: so he gave up trying, and walked away with an air of dignity and unconcern, remarking, "I am sure they are sour."\n\nIt is easy to despise what you cannot get.'],
+['The Boy Who Cried Wolf','Aesop','A Shepherd-boy, who watched a flock of sheep near a village, brought out the villagers three or four times by crying out, "Wolf! Wolf!" and when his neighbours came to help him, laughed at them for their pains.\n\nThe Wolf, however, did truly come at last. The Shepherd-boy, now really alarmed, shouted in an agony of terror: "Pray, do come and help me; the Wolf is killing the sheep." But no one paid any heed to his cries, nor rendered any assistance. The Wolf, having no cause of fear, at his leisure lacerated or destroyed the whole flock.\n\nThere is no believing a liar, even when he speaks the truth.']];
+const day=Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5),S=STORIES[day%STORIES.length];
+$('st').textContent=S[0];$('sa').textContent=S[1];$('sx').textContent=S[2];
+const prox=u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u);
+(async()=>{const u='https://api.poets.org/api/poem-aday';let j;try{j=await (await fetch(u)).json()}catch{try{j=await (await fetch(prox(u))).json()}catch{}}
+if(!j||!j[0]){$('pt').innerHTML='Couldn\'t load today\'s poem. <a href="https://poets.org/poem-a-day" target="_blank">Open on poets.org</a>';return}
+const h=(j[0].poem.text||'').replace(/<br\s*\/?>/gi,'\n').replace(/<\/p>/gi,'\n\n'),d=new DOMParser().parseFromString(h,'text/html').body.textContent.trim();
+$('pt').textContent=j[0].poem.title;$('pa').textContent='by '+(j[0].poet?.name||'')+' · Poem-a-Day, poets.org';$('px').textContent=d})();
+
+// browse
+const NEWS=[['Guardian','https://www.theguardian.com/world/rss'],['Hacker News','https://hnrss.org/frontpage'],['TLDR','https://tldr.tech/api/rss/tech'],['TLDR AI','https://tldr.tech/api/rss/ai']];
+const DEFCH='@ChadCat\n@BubbleBrief\n@DolanDarkest\n@PivotToAI\nUCbfYPyITQ-7l4upoX8nvctg\nUCsBjURrPoezykLs9EqgamOA\nUCknLrEdhRCp1aegoMqRaCZg';
+$('chs').value=L('chs',DEFCH);$('chv').onclick=()=>V('chs',$('chs').value);$('loc').value=L('city','');$('locs').onclick=()=>V('city',$('loc').value);
+let mins=10;document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{mins=+b.dataset.m;document.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('p',x===b))});
+const bt=Timer(r=>$('bt').textContent=fmt(r),()=>{$('lock').style.display='flex';$('pl').src='';beeps(3,700);unwake()});
+$('lk').onclick=()=>{$('lock').style.display='none';$('bmain').style.display='none';$('bset').style.display='block'};
+$('bgo').onclick=()=>{$('bset').style.display='none';$('bmain').style.display='block';bt.set(mins*60);bt.start();wake();loadFeed()};
+const cut=Date.now()-864e5,pd=s=>new Date(String(s).replace(' ','T')+'Z').getTime();
+async function rss(u){const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(u));const j=await r.json();return{t:j.feed?.title||'',items:j.items||[]}}
+async function chId(x){x=x.trim();if(/^UC[\w-]{22}$/.test(x))return x;const c=L('chid',{});if(c[x])return c[x];const h=await (await fetch(prox('https://www.youtube.com/'+x))).text();const m=h.match(/channel_id=(UC[\w-]{22})/)||h.match(/"channelId":"(UC[\w-]{22})"/)||h.match(/"externalId":"(UC[\w-]{22})"/);if(!m)throw 0;c[x]=m[1];V('chid',c);return m[1]}
+async function weather(){const el=document.createElement('div');el.className='card';el.textContent='Weather: loading…';$('feed').append(el);
+try{let p=L('geo',null),city=L('city','');if(city){const g=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&name='+encodeURIComponent(city))).json();const r=g.results[0];p={la:r.latitude,lo:r.longitude,n:r.name}}
+else if(!p)p=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(x=>ok({la:x.coords.latitude,lo:x.coords.longitude,n:'Here'}),no,{timeout:8000}));
+V('geo',p);const w=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.la}&longitude=${p.lo}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`)).json();
+const c=w.current.weather_code,t=c==0?'Clear':c<4?'Cloudy':c<50?'Fog':c<70?'Rain':c<80?'Snow':c<90?'Showers':'Storm',d=w.daily;
+el.innerHTML=`<div class="src">Weather · ${esc(p.n)}</div><b style="font-size:1.6em">${Math.round(w.current.temperature_2m)}°C</b> ${t}<div class="mut">High ${Math.round(d.temperature_2m_max[0])}° · Low ${Math.round(d.temperature_2m_min[0])}° · Rain chance ${d.precipitation_probability_max[0]}%</div>`}
+catch{el.textContent='Weather unavailable (allow location or set a city in settings).'}}
+function play(id,t){const f=$('pl');f.style.display='block';f.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&playsinline=1';$('plx').innerHTML=esc(t)+' · <a href="https://www.youtube.com/watch?v='+id+'" target="_blank">Open on YouTube</a>'}
+async function loadFeed(){const F=$('feed');F.innerHTML='';weather();const out=[],err=[];
+const jobs=NEWS.map(async([n,u])=>{try{const r=await rss(u);r.items.forEach(i=>{if(/\((sponsor(ed)?)\)/i.test(i.title))return;out.push({src:n,t:i.title,l:i.link,d:pd(i.pubDate)})})}catch{err.push(n)}});
+L('chs',DEFCH).split('\n').filter(x=>x.trim()).forEach(c=>jobs.push((async()=>{try{const id=await chId(c),r=await rss('https://www.youtube.com/feeds/videos.xml?channel_id='+id);r.items.forEach(i=>{const m=(i.guid||i.link).match(/(?:yt:video:|v=)([\w-]{11})/);if(m)out.push({src:r.t||c,t:i.title,l:i.link,d:pd(i.pubDate),v:m[1]})})}catch{err.push(c)}})()));
+await Promise.all(jobs);
+const items=out.filter(i=>i.d>cut).sort((a,b)=>b.d-a.d);
+const first=items.find(i=>i.v);if(first)play(first.v,first.t);
+items.forEach(i=>{const a=document.createElement('a');a.className='it';a.href=i.l;if(i.v){a.innerHTML=`<img loading="lazy" src="https://i.ytimg.com/vi/${i.v}/mqdefault.jpg"><div><div class="src">▶ ${esc(i.src)}</div>${esc(i.t)}</div>`;a.onclick=e=>{e.preventDefault();play(i.v,i.t);scrollTo({top:0,behavior:'smooth'})}}else{a.target='_blank';a.innerHTML=`<div><div class="src">${esc(i.src)}</div>${esc(i.t)}</div>`}F.append(a)});
+const m=document.createElement('p');m.className='mut c';m.textContent=(items.length?'':'Nothing new in the last 24h. ')+(err.length?'Failed: '+err.join(', ')+'. (Proxy may be rate-limited, or check the channel handle.)':'');F.append(m)}
+</script></body></html>
